@@ -1,44 +1,86 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from werkzeug.utils import secure_filename
 import os
+import sys
+import shutil
+import time
+import asyncio
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.responses import JSONResponse
 
-app = Flask(__name__)
-CORS(app)  # Aktiviert CORS für alle Routen
+src_path = os.path.join(os.path.dirname(__file__), 'src')
+sys.path.append(src_path)
 
-# Verzeichnis für hochgeladene Dateien
-UPLOAD_FOLDER = 'uploads'
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+from installPackage import PackageInstaller
+from moviepy.editor import VideoFileClip
+from subtitle_gen import Subtitle_gen
+from file import FileManager
+from timer import Time
+from installation import Installation
+from design import ProgramDesign
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB Limit
+json_file_path = "src/data.json"
 
-@app.route('/')
-def index():
-    return "Welcome to the File Upload API. Use the /upload endpoint to upload files."
+app = FastAPI()
 
-@app.route('/upload', methods=['POST'])  # Nur POST-Anfragen erlauben
-def upload_file():
-    if request.method == 'POST':
-        # Prüfen, ob die Anfrage eine Datei enthält
-        if 'file' not in request.files:
-            return jsonify({"error": "No file part"}), 400
+if not os.path.exists(json_file_path):
+    Installation.startup()
 
-        file = request.files['file']
+PackageInstaller.check_and_install_package('openai-whisper')
+PackageInstaller.check_and_install_package('ffmpeg-python')
+PackageInstaller.check_and_install_package('moviepy')
 
-        # Prüfen, ob eine Datei ausgewählt wurde
-        if file.filename == '':
-            return jsonify({"error": "No selected file"}), 400
 
-        # Datei speichern
-        if file:
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            return jsonify({"message": "File uploaded successfully", "file_path": file_path, "filename": filename}), 200
-    else:
-        return jsonify({"error": "Method not allowed"}), 405  # Falls eine andere Methode als POST verwendet wird
+async def subtitel(file_path, filename):
+    sub = Subtitle_gen()
+    await sub.untertitel(file_path, filename)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the Subtitle Generator API"}
+
+
+@app.post("/generate_subtitle/")
+async def generate_subtitle(file: UploadFile = File(...)):
+    try:
+        if not file.filename.endswith(('.mp4', '.mkv', '.avi')):
+            raise HTTPException(status_code=400, detail="Invalid file format. Only .mp4, .mkv, .avi files are accepted.")
+        
+        upload_dir = os.path.join(os.getcwd(), 'uploads')
+        os.makedirs(upload_dir, exist_ok=True)  # Erstelle das Verzeichnis, falls es nicht existiert
+        
+        filename = FileManager.get_file_name(file.filename)
+        file_path = os.path.join(upload_dir, filename)
+        
+        with open(file_path, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+        
+        video_duration = FileManager.duration_video(file_path)
+        d = FileManager.readjson()
+        ProgramDesign.duration(video_duration, d)
+        
+        start_time = time.time()
+        await subtitel(file_path, filename)
+        end_time = time.time()
+        execution_time = end_time - start_time
+        
+        output_file = os.path.join(upload_dir, filename + '_subtitle.mp4')
+        subtitle = os.path.join(upload_dir, filename + '_subtitel.srt')
+        FileManager.combine_video_with_subtitle(file_path, subtitle, output_file)
+        
+        FileManager.delete_tmp_file(file_path)
+        FileManager.move_tmp_directory_back(file_path, filename)
+        
+        ProgramDesign.neededtime(execution_time)
+        
+        return JSONResponse(status_code=200, content={
+            "message": "Subtitle generated successfully",
+            "output_file": output_file,
+            "execution_time": execution_time
+        })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
