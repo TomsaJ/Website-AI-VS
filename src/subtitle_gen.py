@@ -5,7 +5,7 @@ import os
 
 class Subtitle_gen:
     @staticmethod
-    async def untertitel(file_path, filename):
+    def untertitel(file_path, filename):
         model = whisper.load_model("medium")
         options = whisper.DecodingOptions(language='de', fp16=False)
         result = model.transcribe(file_path)

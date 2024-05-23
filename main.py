@@ -1,6 +1,8 @@
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import HTMLResponse
 import shutil
+import os
+import sys
 from pathlib import Path
 
 app = FastAPI()
@@ -21,8 +23,15 @@ async def upload_file(file: UploadFile = File(...)):
     file_location = Path(UPLOAD_DIRECTORY) / file.filename
     with open(file_location, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-    return {"info": f"Datei '{file.filename}' erfolgreich hochgeladen"}
+    file_path= file_location
+    file_path = FileManager.copy_to_tmp_directory(file_path, file.filename)
+    Subtitle_gen.untertitel(file_path, file.filename)
+    return {"info": f"Datei '{file.filename} and {file_path}' erfolgreich hochgeladen"}
 
 if __name__ == "__main__":
+    src_path = os.path.join(os.path.dirname(__file__), 'src')
+    sys.path.append(src_path)
+    from subtitle_gen import Subtitle_gen
+    from file import FileManager
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
