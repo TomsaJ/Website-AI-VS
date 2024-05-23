@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks
 from fastapi.responses import HTMLResponse
 import shutil
 import os
@@ -19,14 +19,18 @@ async def main():
         return HTMLResponse(content=file.read(), status_code=200)
 
 @app.post("/uploadfile/")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
     file_location = Path(UPLOAD_DIRECTORY) / file.filename
     with open(file_location, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     file_path= file_location
-    file_path = FileManager.copy_to_tmp_directory(file_path, file.filename)
-    Subtitle_gen.untertitel(file_path, file.filename)
-    return {"info": f"Datei '{file.filename} and {file_path}' erfolgreich hochgeladen"}
+    background_tasks.add_task(process_file, file_path, file.filename)
+    
+    return {"info": f"Datei '{file.filename}' erfolgreich hochgeladen"}
+
+async def process_file(file_path: Path, filename: str):
+    tmp_file_path = FileManager.copy_to_tmp_directory(file_path, filename)
+    Subtitle_gen.untertitel(tmp_file_path, filename)
 
 if __name__ == "__main__":
     src_path = os.path.join(os.path.dirname(__file__), 'src')
