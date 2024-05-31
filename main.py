@@ -115,6 +115,8 @@ async def process_file(file_path: Path, filename: str):
 max_workers = max(1, os.cpu_count() - 1)
 executor = ProcessPoolExecutor(max_workers=max_workers)
 
+app.mount("/videos", StaticFiles(directory="videos"), name="videos")
+
 @app.post("/uploadfile/")
 async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...)):
     
@@ -139,6 +141,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     Subtitle_gen.untertitel(tmp_file_path, filename)
     output_file = 'videos/' +filename + '/' + filename + '_subtitle.mp4'
     subtitle = 'videos/' +filename + '/' + filename + '_subtitel.srt'
+    file_path = 'videos/' +filename + '/' + filename + '.mp4'
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file)
     
     # Redirect to a status page
@@ -171,7 +174,7 @@ async def status_page(request: Request):
     else:
         # Handle the case where no output_file is available
         return HTMLResponse(content="<h1>Keine Datei hochgeladen</h1>")
-
+    
 if __name__ == "__main__":
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
