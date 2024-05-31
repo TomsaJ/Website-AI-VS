@@ -9,7 +9,7 @@ class FileManager:
     @staticmethod
     def copy_to_tmp_directory(file_path, filename):
         # Erstelle einen temporären Ordner im aktuellen Verzeichnis
-        tmp_folder = os.path.join(os.getcwd(), filename)
+        tmp_folder = os.path.join(os.getcwd(), 'videos' + filename)
         os.makedirs(tmp_folder, exist_ok=True)
         # Extrahiere den Dateinamen aus dem angegebenen Pfad
         file_name = os.path.basename(file_path)

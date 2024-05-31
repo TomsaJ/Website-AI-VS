@@ -19,7 +19,7 @@ class Subtitle_gen:
         result = model.transcribe(file_path)
         
         # Speichern der SRT-Datei
-        save_target_srt = os.path.join(os.getcwd(), filename + '_subtitel.srt')
+        save_target_srt = os.path.join(os.getcwd(), 'videos' +filename + '/'  + filename + '_subtitel.srt')
         with open(save_target_srt, 'w') as file:
             for indx, segment in enumerate(result['segments'], start=1):
                 start_time = datetime.timedelta(seconds=segment['start'])
@@ -37,7 +37,7 @@ class Subtitle_gen:
                 file.write(segment['text'].strip() + '\n\n')
         
         # Speichern der Textdatei
-        save_target_txt = os.path.join(os.getcwd(), filename + '_videotext.txt')
+        save_target_txt = os.path.join(os.getcwd(), 'videos' + filename + '/'  +  filename + '_videotext.txt')
         with open(save_target_txt, 'w') as file:
             file.write(result['text'])
         with open(save_target_txt, 'w') as file:
