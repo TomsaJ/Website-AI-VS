@@ -131,6 +131,7 @@ async def upload_file(file_location: str = Form(...), video_duration: float = Fo
     filename = FileManager.get_file_name(file_path)
     # Verarbeitung der Datei
     tmp_file_path = FileManager.copy_to_tmp_directory(file_path, filename)
+    FileManager.delete_tmp_file(file_path)
     print(tmp_file_path)
     Subtitle_gen.untertitel(tmp_file_path, filename)
     output_file = 'videos/' +filename + '/' + filename + '_subtitle.mp4'
