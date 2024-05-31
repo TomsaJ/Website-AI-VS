@@ -7,3 +7,6 @@ video/
 src/.ipynb_checkpoints/
 src/time.csv
 uploads/
+*.mp4
+*.srt
+*.txt
