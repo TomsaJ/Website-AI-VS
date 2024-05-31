@@ -12,6 +12,8 @@
         <button type="submit">Hochladen</button>
     </form>
 
+    <button> <a href="upload/"> Klick Me </a></button>
+
     <script>
         document.getElementById('uploadForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Prevent the default form submission

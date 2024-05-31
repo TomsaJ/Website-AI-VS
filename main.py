@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, BackgroundTasks, Request
+from fastapi import FastAPI, File, UploadFile, BackgroundTasks, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from pathlib import Path
 import shutil
@@ -36,16 +36,18 @@ async def upload_page():
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
-
+# Route, um die Datei zu empfangen und zu verarbeiten
 @app.post("/upload_duration/", response_class=HTMLResponse)
 async def upload_duration(file: UploadFile = File(...)):
+    # Importieren der Module
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
     from file import FileManager
     from design import ProgramDesign
+    
     try:
         # Sicherstellen, dass das Upload-Verzeichnis existiert
-        upload_dir = "uploads"
+        upload_dir = UPLOAD_DIRECTORY
         if not os.path.exists(upload_dir):
             os.makedirs(upload_dir)
 
@@ -55,13 +57,12 @@ async def upload_duration(file: UploadFile = File(...)):
         # Datei speichern
         with open(file_location, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+        
+        # Video-Dauer berechnen
         video_duration = FileManager.duration_video(file_location)
-        #d = FileManager.readjson()
         duration = ProgramDesign.duration(video_duration, 0.18)
-        # Simulieren Sie die Berechnung der Dauer (hier können Sie tatsächliche Logik hinzufügen)
-        #duration = "3"
-        print(file_location)
-        # Erstellen Sie die Antwortseite
+        
+        # Erstellen der Antwortseite mit verstecktem Formular zur Weiterleitung
         content = f"""
         <!DOCTYPE html>
         <html>
@@ -70,8 +71,20 @@ async def upload_duration(file: UploadFile = File(...)):
         </head>
         <body>
             <h1>Upload abgeschlossen</h1>
-            <p>Datei: {file.filename, file_location, video_duration}</p>
-            <p>Dauer: {duration}</p>
+            <p>Datei: {file.filename}</p>
+            <p>Speicherort: {file_location}</p>
+            <p>Video Dauer: {video_duration}</p>
+            <p>Berechnete Dauer: {duration}</p>
+            <form action="/uploadfile/" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="file" value="{file.filename}">
+                <input type="hidden" name="file_location" value="{file_location}">
+                <input type="hidden" name="video_duration" value="{video_duration}">
+                <input type="hidden" name="duration" value="{duration}">
+                <input type="submit" value="Bestätigen und fortfahren">
+            </form>
+            <script>
+                document.getElementById('hiddenForm').submit();
+            </script>
         </body>
         </html>
         """
@@ -100,18 +113,29 @@ max_workers = max(1, os.cpu_count() - 1)
 executor = ProcessPoolExecutor(max_workers=max_workers)
 
 @app.post("/uploadfile/")
-async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
-    file_location = Path(UPLOAD_DIRECTORY) / file.filename
-    with open(file_location, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+async def upload_file(file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...)):
+    
+    src_path = os.path.join(os.path.dirname(__file__), 'src')
+    sys.path.append(src_path)
+    from file import FileManager
+    from design import ProgramDesign
+    from subtitle_gen import Subtitle_gen
 
-    file_path = file_location
-    tmp_file_path = FileManager.copy_to_tmp_directory(file_path, file.filename)
-    Subtitle_gen.untertitel(tmp_file_path, file.filename)
+    # Sicherstellen, dass das Upload-Verzeichnis existiert
+    if not os.path.exists(UPLOAD_DIRECTORY):
+        os.makedirs(UPLOAD_DIRECTORY)
+
+    # Dateiort und Namen extrahieren
+    file_path = Path(file_location)
+    file_name = file_path.name
+
+    # Verarbeitung der Datei
+    tmp_file_path = FileManager.copy_to_tmp_directory(file_path, file_name)
+    print(tmp_file_path)
+    Subtitle_gen.untertitel(tmp_file_path, file_name)
     
     # Redirect to a status page
-    return RedirectResponse(url=f"/status/{file.filename}", status_code=303)
-
+    return RedirectResponse(url=f"/status/{file_name}", status_code=303)
 
 
 @app.get("/status/{filename}", response_class=HTMLResponse)
@@ -120,16 +144,17 @@ async def status_page(request: Request, filename: str):
     
     # Simple HTML to display status
     html_content = f"""
-    <html>
+        <!DOCTYPE html>
+        <html>
         <head>
-            <title>Processing Status</title>
+            <title>Upload abgeschlossen</title>
         </head>
         <body>
-            <h1>File: {filename}</h1>
-            <p>Status: Processing</p>
+            <h1>Upload abgeschlossen</h1>
+            
         </body>
-    </html>
-    """
+        </html>
+        """
     return HTMLResponse(content=html_content)
 
 if __name__ == "__main__":
