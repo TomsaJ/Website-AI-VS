@@ -40,7 +40,7 @@ class Subtitle_gen:
         save_target_txt = os.path.join(os.getcwd(), filename + '_videotext.txt')
         with open(save_target_txt, 'w') as file:
             file.write(result['text'])
-        with open(save_target, 'w') as file:
+        with open(save_target_txt, 'w') as file:
             for indx, segment in enumerate(result['segments'], start=1):
                 text = segment['text'].strip()
                 # Überprüfe, ob der Text ein Punkt enthält

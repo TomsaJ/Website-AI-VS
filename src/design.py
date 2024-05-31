@@ -20,6 +20,8 @@ class ProgramDesign:
     
     def duration(video_duration, d):
         print(f"Dauert: {(video_duration * d)/60:.2f} Minuten")
+        d = ((video_duration * d)/60)
+        return d
 
     def neededtime(execution_time):
         print("Der Untertitel wurde in {:.2f} Minuten erzeugt.".format((execution_time/60)%60))
