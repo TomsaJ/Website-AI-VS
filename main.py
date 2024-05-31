@@ -128,14 +128,17 @@ async def upload_file(file_location: str = Form(...), video_duration: float = Fo
     # Dateiort und Namen extrahieren
     file_path = Path(file_location)
     file_name = file_path.name
-
+    filename = FileManager.get_file_name(file_path)
     # Verarbeitung der Datei
-    tmp_file_path = FileManager.copy_to_tmp_directory(file_path, file_name)
+    tmp_file_path = FileManager.copy_to_tmp_directory(file_path, filename)
     print(tmp_file_path)
-    Subtitle_gen.untertitel(tmp_file_path, file_name)
+    Subtitle_gen.untertitel(tmp_file_path, filename)
+    output_file = 'videos/' +filename + '/' + filename + '_subtitle.mp4'
+    subtitle = 'videos/' +filename + '/' + filename + '_subtitel.srt'
+    FileManager.combine_video_with_subtitle(file_path, subtitle, output_file)
     
     # Redirect to a status page
-    return RedirectResponse(url=f"/status/{file_name}", status_code=303)
+    return RedirectResponse(url=f"/status/{filename}", status_code=303)
 
 
 @app.get("/status/{filename}", response_class=HTMLResponse)
