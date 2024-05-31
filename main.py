@@ -142,8 +142,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file)
     
     # Redirect to a status page
-    Request.session['output_file'] = output_file
-    return RedirectResponse(url="/status", status_code=303)
+    return RedirectResponse(url="/", status_code=303)
 
 
 @app.get("/status", response_class=HTMLResponse)
