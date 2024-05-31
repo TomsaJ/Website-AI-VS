@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
+import json
 
 class DB:
 
@@ -42,5 +43,7 @@ class DB:
         finally:
             cursor.close()
 
-
+#debugging
+if __name__ == "__main__":
+    load_db_config()
 
