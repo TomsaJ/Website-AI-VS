@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, BackgroundTasks, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from pathlib import Path
+from starlette.middleware.sessions import SessionMiddleware
 import shutil
 import os
 import sys
@@ -11,9 +12,11 @@ from concurrent.futures import ProcessPoolExecutor
 
 app = FastAPI()
 logging.basicConfig(level=logging.INFO)
+app.add_middleware(SessionMiddleware, secret_key="some-random-secret-key")
 
 # Verzeichnis zum Speichern der hochgeladenen Dateien
 UPLOAD_DIRECTORY = "uploads"
+
 
 # Stelle sicher, dass das Upload-Verzeichnis existiert
 Path(UPLOAD_DIRECTORY).mkdir(parents=True, exist_ok=True)
@@ -73,8 +76,8 @@ async def upload_duration(file: UploadFile = File(...)):
             <h1>Upload abgeschlossen</h1>
             <p>Datei: {file.filename}</p>
             <p>Speicherort: {file_location}</p>
-            <p>Video Dauer: {video_duration}</p>
-            <p>Berechnete Dauer: {duration}</p>
+            <p>Video Dauer: {video_duration +1 }</p>
+            <p>Berechnete Dauer: {duration +1 }</p>
             <form action="/uploadfile/" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="file" value="{file.filename}">
                 <input type="hidden" name="file_location" value="{file_location}">
@@ -113,7 +116,7 @@ max_workers = max(1, os.cpu_count() - 1)
 executor = ProcessPoolExecutor(max_workers=max_workers)
 
 @app.post("/uploadfile/")
-async def upload_file(file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...)):
+async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...)):
     
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
@@ -139,27 +142,36 @@ async def upload_file(file_location: str = Form(...), video_duration: float = Fo
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file)
     
     # Redirect to a status page
-    return RedirectResponse(url=f"/status/{filename}", status_code=303)
+    Request.session['output_file'] = output_file
+    return RedirectResponse(url="/status", status_code=303)
 
 
-@app.get("/status/{filename}", response_class=HTMLResponse)
-async def status_page(request: Request, filename: str):
-    file_location = Path(UPLOAD_DIRECTORY) / filename
-    
-    # Simple HTML to display status
-    html_content = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Upload abgeschlossen</title>
-        </head>
-        <body>
-            <h1>Upload abgeschlossen</h1>
-            
-        </body>
-        </html>
-        """
-    return HTMLResponse(content=html_content)
+@app.get("/status", response_class=HTMLResponse)
+async def status_page(request: Request):
+    # Holen Sie den output_file aus der Sitzung
+    output_file = Request.session.get('output_file')
+
+    # Stellen Sie sicher, dass ein output_file vorhanden ist
+    if output_file:
+        file_location = Path(UPLOAD_DIRECTORY) / output_file
+
+        # Simple HTML to display status
+        html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Upload abgeschlossen</title>
+            </head>
+            <body>
+                <h1>Upload abgeschlossen</h1>
+                <a href="{file_location}">Klick hier, um die Datei herunterzuladen</a>
+            </body>
+            </html>
+            """
+        return HTMLResponse(content=html_content)
+    else:
+        # Handle the case where no output_file is available
+        return HTMLResponse(content="<h1>Keine Datei hochgeladen</h1>")
 
 if __name__ == "__main__":
     src_path = os.path.join(os.path.dirname(__file__), 'src')
