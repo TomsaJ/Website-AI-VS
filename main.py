@@ -42,6 +42,7 @@ async def upload_duration(file: UploadFile = File(...)):
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
     from file import FileManager
+    from design import ProgramDesign
     try:
         # Sicherstellen, dass das Upload-Verzeichnis existiert
         upload_dir = "uploads"
@@ -54,11 +55,12 @@ async def upload_duration(file: UploadFile = File(...)):
         # Datei speichern
         with open(file_location, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-        #video_duration = FileManager.duration_video(file_location)
+        video_duration = FileManager.duration_video(file_location)
         #d = FileManager.readjson()
-        #duration = ProgramDesign.duration(video_duration, 1)
+        duration = ProgramDesign.duration(video_duration, 0.18)
         # Simulieren Sie die Berechnung der Dauer (hier können Sie tatsächliche Logik hinzufügen)
-        duration = "3"
+        #duration = "3"
+        print(file_location)
         # Erstellen Sie die Antwortseite
         content = f"""
         <!DOCTYPE html>
@@ -68,7 +70,7 @@ async def upload_duration(file: UploadFile = File(...)):
         </head>
         <body>
             <h1>Upload abgeschlossen</h1>
-            <p>Datei: {file.filename}</p>
+            <p>Datei: {file.filename, file_location, video_duration}</p>
             <p>Dauer: {duration}</p>
         </body>
         </html>
