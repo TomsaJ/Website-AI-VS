@@ -10,3 +10,4 @@ uploads/
 *.mp4
 *.srt
 *.txt
+src/db_config.json

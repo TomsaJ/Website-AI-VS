@@ -2,14 +2,22 @@ import mysql.connector
 from mysql.connector import Error
 
 class DB:
-    def dbConnection():    
+
+    def load_db_config():
+        with open('db_config.json', 'r') as file:
+            config = json.load(file)
+        return config
+
+    def dbConnection():
+        connection = None
+        db_config = load_db_config(config_file_path)
         try:
     # Verbindung herstellen
             connection = mysql.connector.connect(
-            host='dein_host',          # z.B. 'localhost'
-            database='deine_datenbank',# Name der Datenbank
-            user='dein_benutzername',  # z.B. 'root'
-            password='dein_passwort'   # Passwort des Benutzers
+            host=config['host'],
+            user=config['user'],
+            passwd=config['password'],
+            database=config['database']
         )
             if connection.is_connected():
                 print("Erfolgreich verbunden zu MySQL-Datenbank")
