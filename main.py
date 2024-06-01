@@ -67,32 +67,78 @@ async def upload_duration(file: UploadFile = File(...)):
         
         # Erstellen der Antwortseite mit verstecktem Formular zur Weiterleitung
         content = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Upload abgeschlossen</title>
-        </head>
-        <body>
-            <h1>Upload abgeschlossen</h1>
-            <p>Datei: {file.filename}</p>
-            <p>Speicherort: {file_location}</p>
-            <p>Video Dauer: {video_duration +1 }</p>
-            <p>Berechnete Dauer: {duration +1 }</p>
-            <form action="/uploadfile/" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="file" value="{file.filename}">
-                <input type="hidden" name="file_location" value="{file_location}">
-                <input type="hidden" name="video_duration" value="{video_duration}">
-                <input type="hidden" name="duration" value="{duration}">
-                <input type="submit" value="Bestätigen und fortfahren">
-            </form>
-            <script>
-                document.getElementById('hiddenForm').submit();
-            </script>
-        </body>
-        </html>
-        """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload abgeschlossen</title>
+    <style>
+        ul {{
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: darkolivegreen;
+        }}
+        nav{{
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: darkolivegreen;
+        }}
+        li {{
+            float: left;
+        }}
+        li a {{
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }}
+        li a:hover:not(.active) {{
+            background-color: white;
+            color: #212121;
+        }}
+        .active {{
+            background-color: #212121;
+        }}
+        .active:hover{{
+            background-color: white;
+            color: #212121;
+        }}
+        body{{
+            margin: 0;
+            padding: 0;
+        }}
+    </style>
+</head>
+<body>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/upload/">Upload</a></li>
+    </ul>
+    <h1>Upload abgeschlossen</h1>
+    <p>Datei: {file.filename}</p>
+    <p>Speicherort: {file_location}</p>
+    <p>Video Dauer: {video_duration + 1}</p>
+    <p>Berechnete Dauer: {duration + 1}</p>
+    <form id="hiddenForm" action="/uploadfile/" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="file" value="{file.filename}">
+        <input type="hidden" name="file_location" value="{file_location}">
+        <input type="hidden" name="video_duration" value="{video_duration}">
+        <input type="hidden" name="duration" value="{duration}">
+        <input type="submit" value="Bestätigen und fortfahren">
+    </form>
+    <script>
+        document.getElementById('hiddenForm').submit();
+    </script>
+</body>
+</html>
+"""
 
-        return HTMLResponse(content=content)
+        return HTMLResponse(content=content)    
+
 
     except Exception as e:
         logging.error(f"Fehler beim Hochladen der Datei: {e}")

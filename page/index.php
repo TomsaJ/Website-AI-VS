@@ -1,22 +1,78 @@
+<?php
+require 'frontend/head.php';
+head();
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/page/css/style.css">
+
     <title>Datei hochladen</title>
 </head>
+<style>
+    ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: darkolivegreen;
+}
+
+nav{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: darkolivegreen;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center ;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: white;
+    color: #212121;
+}
+
+.active {
+    background-color: #212121;
+}
+
+.active:hover{
+    background-color: white;
+    color: #212121;
+}
+body{
+    /*background-color: #212121;*/
+    margin: 0;
+    padding: 0;
+}
+</style>
 <body>
+<ul>
+    <li><a href= "/"> Home </a></li>
+    <li><a href= "/upload/"> Upload </a></li>
+</ul>
+
     <h1>Datei hochladen</h1>
-    <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" name="file" id="fileInput" required>
-        <button type="submit">Hochladen</button>
-    </form>
+
     <!-- from datbase in next time -->
     <button> <a href="upload/"> Klick Me </a></button>
-    <video width="320" height="270" controls autoplay>
+    <video width="320" height="270" controls >
     <source src="/videos/d/d_subtitle.mp4" type="video/mp4">
     Your browser does not support the video tag.
-</video><video width="320" height="270" controls autoplay>
+</video><video width="320" height="270" controls >
     <source src="/videos/d/d.mp4" type="video/mp4">
     Your browser does not support the video tag.
 </video>
