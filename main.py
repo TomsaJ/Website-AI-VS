@@ -128,16 +128,19 @@ async def upload_duration(file: UploadFile = File(...)):
         <input type="hidden" name="file_location" value="{file_location}">
         <input type="hidden" name="video_duration" value="{video_duration}">
         <input type="hidden" name="duration" value="{duration}">
-        <input type="submit" value="Bestätigen und fortfahren">
     </form>
+    <button id="submitButton">Bestätigen und fortfahren</button>
     <script>
-        document.getElementById('hiddenForm').submit();
+        document.getElementById('submitButton').addEventListener('click', function() {{
+            document.getElementById('hiddenForm').submit();
+        }});
     </script>
 </body>
 </html>
 """
 
-        return HTMLResponse(content=content)    
+        return HTMLResponse(content=content)
+
 
 
     except Exception as e:

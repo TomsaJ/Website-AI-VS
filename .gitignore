@@ -11,3 +11,4 @@ uploads/
 *.srt
 *.txt
 src/db_config.json
+.idea/
