@@ -220,7 +220,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     file_path = 'videos/' +filename + '/' + filename + '.mp4'
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file)
     try:
-        DB.insert_video(file_path, tags)
+        DB.insert_video(output_file, tags)
         print("Yes")
     except:
         folder = "/videos/" + file_name
