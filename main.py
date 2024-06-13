@@ -111,9 +111,34 @@ async def upload_duration(file: UploadFile = File(...)):
             margin: 0;
             padding: 0;
         }}
+        footer {{
+                position: absolute;
+                background-color: #4caf50;
+                width: 100%;
+            }}
     </style>
 </head>
+<script>
+    function get_height() {{
+        return window.innerHeight;
+    }}
+
+    function foot() {{
+        return get_height() - 46;
+    }}
+
+    function setFooterPosition() {{
+        var footer = document.getElementById('myFooter');
+        footer.style.marginTop = foot() + 'px';
+    }}
+
+    window.onload = setFooterPosition;
+    window.onresize = setFooterPosition; // Adjust footer position if window is resized
+</script>
 <body>
+<footer id="myFooter">
+    <p>halle</p>
+</footer>
     <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/upload/">Upload</a></li>
@@ -128,6 +153,7 @@ async def upload_duration(file: UploadFile = File(...)):
         <input type="hidden" name="file_location" value="{file_location}">
         <input type="hidden" name="video_duration" value="{video_duration}">
         <input type="hidden" name="duration" value="{duration}">
+        <input type="hidden" name="tags" value="{"d"}">
     </form>
     <button id="submitButton">Bestätigen und fortfahren</button>
     <script>
@@ -167,13 +193,14 @@ executor = ProcessPoolExecutor(max_workers=max_workers)
 app.mount("/videos", StaticFiles(directory="videos"), name="videos")
 
 @app.post("/uploadfile/")
-async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...)):
+async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), tags: str = Form(...)):
     
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
     from file import FileManager
     from design import ProgramDesign
     from subtitle_gen import Subtitle_gen
+    from db import DB
 
     # Sicherstellen, dass das Upload-Verzeichnis existiert
     if not os.path.exists(UPLOAD_DIRECTORY):
@@ -192,6 +219,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     subtitle = 'videos/' +filename + '/' + filename + '_subtitel.srt'
     file_path = 'videos/' +filename + '/' + filename + '.mp4'
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file)
+    DB.insert_video(file_path, tags)
     
     # Redirect to a status page
     return RedirectResponse(url="/", status_code=303)

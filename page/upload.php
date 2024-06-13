@@ -1,6 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/page/css/style.css">
+
+    <title>Datei hochladen</title>
+</head>
 <style>
     ul {
     list-style-type: none;
@@ -48,8 +54,33 @@ body{
     margin: 0;
     padding: 0;
 }
+    footer {
+        position: absolute;
+        background-color: #4caf50;
+        width: 100%;
+    }
 </style>
+    <script>
+        function get_height() {
+            return window.innerHeight;
+        }
+
+        function foot() {
+            return get_height() - 46;
+        }
+
+        function setFooterPosition() {
+            var footer = document.getElementById('myFooter');
+            footer.style.marginTop = foot() + 'px';
+        }
+
+        window.onload = setFooterPosition;
+        window.onresize = setFooterPosition; // Adjust footer position if window is resized
+    </script>
 <body>
+<footer id="myFooter">
+    <p>halle</p>
+</footer>
 <ul>
     <li><a href= "/"> Home </a></li>
     <li><a href= "/upload/"> Upload </a></li>
@@ -75,7 +106,9 @@ body{
 <body>
     <h1>MP4 Datei hochladen</h1>
     <form id="uploadForm" action="/upload_duration/" method="post" enctype="multipart/form-data">
-        <input name="file" type="file" accept=".mp4">
+        <input name="file" type="file" accept=".mp4"> <br>
+        <label>Tags</label>
+        <!--<input name="text" type="tags"> <br>-->
         <input type="submit" value="Hochladen">
     </form>
 </body>

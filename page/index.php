@@ -58,8 +58,34 @@ body{
     margin: 0;
     padding: 0;
 }
+    footer {
+        position: absolute;
+        background-color: #4caf50;
+        width: 100%;
+    }
 </style>
+<script>
+    function get_height() {
+        return window.innerHeight;
+    }
+
+    function foot() {
+        return get_height() - 46;
+    }
+
+    function setFooterPosition() {
+        var footer = document.getElementById('myFooter');
+        footer.style.marginTop = foot() + 'px';
+    }
+
+    window.onload = setFooterPosition;
+    window.onresize = setFooterPosition; // Adjust footer position if window is resized
+</script>
+
 <body>
+<footer id="myFooter">
+    <p>halle</p>
+</footer>
 <ul>
     <li><a href= "/"> Home </a></li>
     <li><a href= "/upload/"> Upload </a></li>
@@ -78,36 +104,7 @@ body{
 </video>
 
 
-    <script>
-        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent the default form submission
 
-            const form = event.target;
-            const formData = new FormData();
-            const fileInput = document.getElementById('fileInput');
-            formData.append('file', fileInput.files[0]);
-            fetch('/uploadfile/')
-            window.location.href = '/upload.php';
-            try {
-                const response = await fetch('/uploadfile/', {
-                    method: 'POST',
-                    body: formData
-                });
 
-                if (response.ok) {
-                    console.log('Upload successful');
-                    // Redirect to upload.php on successful upload
-                    window.location.href = '/upload.php';
-                } else {
-                    console.error('Upload failed', response.status, response.statusText);
-                    // Handle error
-                    alert('Upload failed: ' + response.statusText);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while uploading the file');
-            }
-        });
-    </script>
 </body>
 </html>
