@@ -2,46 +2,35 @@ import json
 import mysql.connector
 from mysql.connector import Error
 
-class DB:
-    @staticmethod
-    def load_db_config():
-        with open('db_config.json', 'r') as file:
-            config = json.load(file)
-        return config
 
-    @classmethod
-    def db_connection(cls):
-        connection = None
-        db_config = cls.load_db_config()
+
+class DB:
+    def db_conn():
         try:
             connection = mysql.connector.connect(
-                host=db_config['host'],
-                user=db_config['user'],
-                passwd=db_config['password'],
-                database=db_config['database']
+                host="localhost",
+                user="admin",
+                passwd="admin",
+                database="WS-AI-VS"
             )
-            if connection.is_connected():
-                print("Erfolgreich verbunden zu MySQL-Datenbank")
-                cursor = connection.cursor()
-                cursor.execute("SELECT DATABASE();")
-                record = cursor.fetchone()
-                print("Du bist verbunden zu Datenbank:", record)
+            return connection
         except Error as e:
-            print("Fehler beim Verbinden zur MySQL-Datenbank", e)
-        return connection
+            print(f"Fehler bei der Datenbankverbindung: {e}")
 
-    @classmethod
-    def insert_video(cls, path, tags):
-        connection = cls.db_connection()
-        if connection is not None and connection.is_connected():
-            try:
-                with connection.cursor() as cursor:
-                    cursor.execute("INSERT INTO videos (pfad, tags) VALUES (%s, %s)", (path, tags))
-                    connection.commit()
-                    print("Zeile erfolgreich hinzugefügt")
-            except Error as e:
-                print(f"Fehler beim Einfügen der Zeile: {e}")
-            finally:
-                connection.close()
-        else:
-            print("Keine Verbindung zur Datenbank")
+    def insert_video(path, tags):
+        print("path: "+ path + "tags: " + tags)
+        connection = DB.db_conn()
+        try:
+            with connection.cursor() as cursor:
+                # Convert tags list to JSON string
+                #                     tags_json = json.dumps(tags)
+                cursor.execute("INSERT INTO videos (pfad, tags) VALUES (%s, %s)", (path, tags))
+                connection.commit()
+                print("Zeile erfolgreich hinzugefügt")
+        except Error as e:
+            print(f"Fehler beim Einfügen der Zeile: {e}")
+        finally:
+            connection.close()
+
+# Example usage
+# DB.insert_video("/path/to/video.mp4", ["tag1", "tag2", "tag3"])
