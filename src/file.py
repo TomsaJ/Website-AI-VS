@@ -42,8 +42,8 @@ class FileManager:
         return ziel_pfad
 
     @staticmethod
-    def delete_tmp_folder():
-        folder_path = "tmp"  # Pfad zum zu löschenden Ordner
+    def delete_tmp_folder(folder_path):
+        #folder_path = "tmp"  # Pfad zum zu löschenden Ordner
         try:
             shutil.rmtree(folder_path)
             '''print("Der Ordner 'tmp' wurde erfolgreich gelöscht.")
