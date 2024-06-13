@@ -219,11 +219,12 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     subtitle = 'videos/' +filename + '/' + filename + '_subtitel.srt'
     file_path = 'videos/' +filename + '/' + filename + '.mp4'
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file)
-    DB.insert_video(file_path, tags)
-    
-    # Redirect to a status page
-    return RedirectResponse(url="/", status_code=303)
-
+    try:
+        DB.insert_video(file_path, tags)
+        return RedirectResponse(url="/", status_code=303)
+    except:
+        folder = "/videos/" + file_name
+        FileManager.delete_tmp_folder(folder)
 
 @app.get("/status", response_class=HTMLResponse)
 async def status_page(request: Request):
