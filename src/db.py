@@ -3,23 +3,22 @@ import mysql.connector
 from mysql.connector import Error
 
 class DB:
-    def __init__(self):
-        self.config = self.load_db_config()
-
     @staticmethod
     def load_db_config():
-        with open('src/db_config.json', 'r') as file:
+        with open('db_config.json', 'r') as file:
             config = json.load(file)
         return config
 
-    def db_connection(self):
+    @classmethod
+    def db_connection(cls):
         connection = None
+        db_config = cls.load_db_config()
         try:
             connection = mysql.connector.connect(
-                host=self.config['host'],
-                user=self.config['user'],
-                passwd=self.config['password'],
-                database=self.config['database']
+                host=db_config['host'],
+                user=db_config['user'],
+                passwd=db_config['password'],
+                database=db_config['database']
             )
             if connection.is_connected():
                 print("Erfolgreich verbunden zu MySQL-Datenbank")
@@ -31,8 +30,9 @@ class DB:
             print("Fehler beim Verbinden zur MySQL-Datenbank", e)
         return connection
 
-    def insert_video(self, path, tags):
-        connection = self.db_connection()
+    @classmethod
+    def insert_video(cls, path, tags):
+        connection = cls.db_connection()
         if connection is not None and connection.is_connected():
             try:
                 with connection.cursor() as cursor:
@@ -45,7 +45,3 @@ class DB:
                 connection.close()
         else:
             print("Keine Verbindung zur Datenbank")
-
-# Example usage:
-#db_instance = DB()
-#db_instance.insert_video('/path/to/video.mp4', 'tag1,tag2,tag3')
