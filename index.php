@@ -1,7 +1,3 @@
-<?php
-require 'frontend/head.php';
-head();
-?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -93,8 +89,8 @@ body{
 
     <h1>Datei hochladen</h1>
 
-    <!-- from datbase in next time -->
-    <button> <a href="upload/"> Klick Me </a></button>
+
+    
     <video width="320" height="270" controls >
     <source src="/videos/d/d_subtitle.mp4" type="video/mp4">
     Your browser does not support the video tag.

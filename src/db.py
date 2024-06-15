@@ -1,6 +1,7 @@
 import json
 import mysql.connector
 from mysql.connector import Error
+import pymysql 
 
 
 
@@ -32,5 +33,25 @@ class DB:
         finally:
             connection.close()
 
+    def all_videos():
+        connection = DB.db_conn()
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT pfad FROM videos")
+                myresult = cursor.fetchall()
+            # Generate HTML video elements for each path
+                video_elements = ''.join([
+                f'<video width="320" height="270" controls>'
+                f'<source src="{x[0]}" type="video/mp4">'
+                'Your browser does not support the video tag.'
+                '</video>'
+                for x in myresult
+                ])
+            return video_elements
+        except Error as e:
+            print(f"Fehler beim Abrufen der Daten: {e}")
+        finally:
+            if connection.is_connected():
+                connection.close()
 # Example usage
 # DB.insert_video("/path/to/video.mp4", ["tag1", "tag2", "tag3"])
