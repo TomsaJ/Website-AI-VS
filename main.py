@@ -67,7 +67,7 @@ async def main_page(request: Request):
 @app.get("/upload/", response_class=HTMLResponse)
 async def upload_page():
     try:
-        async with aiofiles.open("page/upload.php", "r") as file:
+        async with aiofiles.open("page/upload.html", "r") as file:
             content = await file.read()
             return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
