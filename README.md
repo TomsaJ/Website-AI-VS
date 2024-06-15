@@ -34,10 +34,11 @@ Es wird die Datenbank <b>WS-AI-VS </b> benötigt. Diese Datenbank braucht einmal
 <code> CREATE TABLE `videos` (
 `id` int(11) NOT NULL,
 `pfad` varchar(255) NOT NULL,
-`tags` varchar(255) NOT NULL
-)
+`tags` varchar(255) NOT NULL)
+
 ALTER TABLE `videos`
 ADD PRIMARY KEY (`id`);
+
 ALTER TABLE `videos`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 COMMIT;
