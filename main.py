@@ -21,7 +21,6 @@ def package_installed(package_name):
     """Überprüft, ob ein Paket installiert ist."""
     package_spec = importlib.util.find_spec(package_name)
     return package_spec is not None
-
 install_packages()
 from fastapi import FastAPI, File, UploadFile, BackgroundTasks, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -35,21 +34,20 @@ from fastapi.staticfiles import StaticFiles
 from concurrent.futures import ProcessPoolExecutor
 from fastapi.templating import Jinja2Templates
 
-
-
-
-app = FastAPI()
+app = FastAPI() 
 logging.basicConfig(level=logging.INFO)
 app.add_middleware(SessionMiddleware, secret_key="some-random-secret-key")
-
 # Verzeichnis zum Speichern der hochgeladenen Dateien
 UPLOAD_DIRECTORY = "uploads"
-
-
 # Stelle sicher, dass das Upload-Verzeichnis existiert
 Path(UPLOAD_DIRECTORY).mkdir(parents=True, exist_ok=True)
 
 templates = Jinja2Templates(directory="page")
+# Determine the number of available CPUs and use all but one
+max_workers = max(1, os.cpu_count() - 1)
+executor = ProcessPoolExecutor(max_workers=max_workers)
+app.mount("/videos", StaticFiles(directory="videos"), name="videos")
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads") 
 
 @app.get("/", response_class=HTMLResponse)
 async def main_page(request: Request):
@@ -116,24 +114,11 @@ async def upload_duration(request: Request, file: UploadFile = File(...), tags: 
         return HTMLResponse(content="File not found", status_code=404)
 
 # Statische Dateien aus dem 'uploads' Verzeichnis bedienen
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Verzeichnis für Uploads erstellen, falls es nicht existiert
 if not os.path.exists("uploads"):
     os.makedirs("uploads")
     
-
-async def process_file(file_path: Path, filename: str):
-    # Ensure that process_file can be called in a synchronous context
-    tmp_file_path = FileManager.copy_to_tmp_directory(file_path, filename)
-    Subtitle_gen.untertitel(tmp_file_path, filename)
-
-# Determine the number of available CPUs and use all but one
-max_workers = max(1, os.cpu_count() - 1)
-executor = ProcessPoolExecutor(max_workers=max_workers)
-
-app.mount("/videos", StaticFiles(directory="videos"), name="videos")
-
 @app.post("/uploadfile/")
 async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), tags: str = Form(...)):
     
