@@ -106,10 +106,11 @@ body{
 <body>
     <h1>MP4 Datei hochladen</h1>
     <form id="uploadForm" action="/upload_duration/" method="post" enctype="multipart/form-data">
-        <input name="file" type="file" accept=".mp4"> <br>
-        <label>Tags</label>
-        <!--<input name="text" type="tags"> <br>-->
-        <input type="submit" value="Hochladen">
+    <input name="file" type="file" accept=".mp4"> <br>
+    <label>Tags</label>
+    <input name="tags" type="text"> <br>
+    <input type="submit" value="Hochladen">
+</form>
     </form>
 </body>
 </html>

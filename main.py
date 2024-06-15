@@ -41,13 +41,13 @@ async def upload_page():
 
 # Route, um die Datei zu empfangen und zu verarbeiten
 @app.post("/upload_duration/", response_class=HTMLResponse)
-async def upload_duration(file: UploadFile = File(...)):
+async def upload_duration(request: Request, file: UploadFile = File(...), tags: str = Form(...)):
     # Importieren der Module
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
     from file import FileManager
     from design import ProgramDesign
-    
+    print(tags)
     try:
         # Sicherstellen, dass das Upload-Verzeichnis existiert
         upload_dir = UPLOAD_DIRECTORY
