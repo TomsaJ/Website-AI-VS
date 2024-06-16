@@ -60,10 +60,10 @@ class DB:
             return ""
         try:
             with connection.cursor() as cursor:
-                cursor.execute("SELECT short_lg, long_lg FROM language")
+                cursor.execute("SELECT language_name FROM language")
                 myresult = cursor.fetchall()
                 language_elements = ''.join([
-                    f'<option value="{x[1][0].upper() + x[1][1:]}">{x[1][0].upper() + x[1][1:]}</option>'
+                    f'<option value="{x[0][0].upper() + x[0][1:]}">{x[0][0].upper() + x[0][1:]}</option>'
                     for x in myresult
                 ])
             return language_elements
@@ -73,5 +73,28 @@ class DB:
         finally:
             if connection.is_connected():
                 connection.close()
+    
+    def get_language_code(lang):
+        connection = DB.db_conn()  # Annahme: db_conn() stellt die Verbindung zur Datenbank her
+        if connection is None:
+            return None  # Rückgabe None, um anzuzeigen, dass keine Verbindung hergestellt werden konnte
+        try:
+            with connection.cursor() as cursor:
+                sql_query = "SELECT language_code FROM language WHERE language_name = %s"
+                cursor.execute(sql_query, (lang,))
+                myresult = cursor.fetchone()  # Da wir nur einen Wert erwarten, verwenden wir fetchone()
+                if myresult:
+                    return myresult[0]  # Rückgabe des ersten Elements des Tupels (language_code)
+                else:
+                    return None  # Rückgabe None, wenn kein Ergebnis gefunden wurde
+        except Error as e:
+            print(f"Error fetching data: {e}")
+            return None  # Rückgabe None im Falle eines Fehlers
+        finally:
+            if connection.is_connected():
+                connection.close()  # Schließen Sie die Verbindung zur Datenbank, wenn sie geöffnet ist
+
+        #language_code
+
 # Example usage
 # DB.insert_video("/path/to/video.mp4", ["tag1", "tag2", "tag3"])

@@ -3,7 +3,11 @@ import shutil
 import ffmpeg
 import subprocess
 import json
+import sys
 from moviepy.editor import VideoFileClip
+src_path = os.path.join(os.path.dirname(__file__), 'src')
+sys.path.append(src_path)
+from db import DB
 
 class FileManager:
     @staticmethod
@@ -89,6 +93,7 @@ class FileManager:
         if not os.path.exists(subtitle_file):
             print("Subtitle file not found.")
             return
+        lang = DB.get_language_code(lang)
         # ffmpeg-python
         #Funktionert leider nicht wie gewünscht. Gerne selber einwenig experimentieren
         #(ffmpeg
@@ -97,18 +102,20 @@ class FileManager:
         #.output(subtitle_file, **{'metadata:s:s:0': 'language=ger'})
         #.run())
         # FFmpeg-Befehl zum Kombinieren von Video und Untertiteln
-        cmd =   [
-                "ffmpeg",
-                "-i", video_file,
-                "-i", subtitle_file,
-                "-c:v", "copy",
-                "-c:a", "copy",
-                "-c:s", "mov_text",
-                "-map", "0:v:0",
-                "-map", "0:a:0",
-                "-map", "1:s:0",
-                "-metadata:s:s:0", "language=ger", output_file
-                ]
+        print(lang)
+        cmd = [
+    "ffmpeg",
+    "-i", video_file,
+    "-i", subtitle_file,
+    "-c:v", "copy",
+    "-c:a", "copy",
+    "-c:s", "mov_text",
+    "-map", "0:v:0",
+    "-map", "0:a:0",
+    "-map", "1:s:0",
+    "-metadata:s:s:0", "language=" + lang,
+    output_file
+]
     # FFmpeg-Befehl ausführen
         with open(os.devnull, 'w') as devnull:
             subprocess.run(cmd, stdout=devnull, stderr=subprocess.STDOUT)
