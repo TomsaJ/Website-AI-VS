@@ -106,11 +106,13 @@ body{
 <body>
     <h1>MP4 Datei hochladen</h1>
     <form id="uploadForm" action="/upload_duration/" method="post" enctype="multipart/form-data">
-    <input name="file" type="file" accept=".mp4"> <br>
-    <label>Tags</label>
-    <input name="tags" type="text"> <br>
-    <input type="submit" value="Hochladen">
-</form>
+        <input name="file" type="file" accept=".mp4"><br>
+        <select id="lang" name="lang" required>
+            <option value="" disabled selected>Bitte auswählen ...</option>
+            {{ lang | safe }}
+        </select>
+        <input type="submit" value="Hochladen">
+    </form>
     </form>
 </body>
 </html>

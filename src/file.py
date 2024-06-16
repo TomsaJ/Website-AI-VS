@@ -81,7 +81,7 @@ class FileManager:
         convert_file.convert()
 
     @staticmethod
-    def combine_video_with_subtitle(video_file, subtitle_file, output_file):
+    def combine_video_with_subtitle(video_file, subtitle_file, output_file, lang):
     # Überprüfen, ob die Dateien existieren
         if not os.path.exists(video_file):
             print("Video file not found.")

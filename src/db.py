@@ -53,5 +53,25 @@ class DB:
         finally:
             if connection.is_connected():
                 connection.close()
+    
+    def all_lang():
+        connection = DB.db_conn()
+        if connection is None:
+            return ""
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT short_lg, long_lg FROM language")
+                myresult = cursor.fetchall()
+                language_elements = ''.join([
+                    f'<option value="{x[1][0].upper() + x[1][1:]}">{x[1][0].upper() + x[1][1:]}</option>'
+                    for x in myresult
+                ])
+            return language_elements
+        except Error as e:
+            print(f"Error fetching data: {e}")
+            return ""
+        finally:
+            if connection.is_connected():
+                connection.close()
 # Example usage
 # DB.insert_video("/path/to/video.mp4", ["tag1", "tag2", "tag3"])

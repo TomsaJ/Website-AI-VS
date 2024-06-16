@@ -63,23 +63,25 @@ async def main_page(request: Request):
 
 
 @app.get("/upload/", response_class=HTMLResponse)
-async def upload_page():
+async def upload_page(request: Request):
+    src_path = os.path.join(os.path.dirname(__file__), 'src')
+    sys.path.append(src_path)
+    from db import DB
     try:
-        async with aiofiles.open("page/upload.html", "r") as file:
-            content = await file.read()
-            return HTMLResponse(content=content, status_code=200)
+        lang = DB.all_lang()
+        return templates.TemplateResponse("upload.html", {"request": request, "lang": lang})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
 # Route, um die Datei zu empfangen und zu verarbeiten
 @app.post("/upload_duration/", response_class=HTMLResponse)
-async def upload_duration(request: Request, file: UploadFile = File(...), tags: str = Form(...)):
+async def upload_duration(request: Request, file: UploadFile = File(...), lang: str = Form(...)):
     # Importieren der Module
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
     from file import FileManager
     from design import ProgramDesign
-    print(tags)
+    print(lang)
     try:
         # Sicherstellen, dass das Upload-Verzeichnis existiert
         upload_dir = UPLOAD_DIRECTORY
@@ -108,7 +110,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), tags: 
         "file_location": file_location,
         "video_duration": video_duration,
         "duration": duration,
-        "tags": tags
+        "lang": lang
     })#return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
@@ -120,7 +122,7 @@ if not os.path.exists("uploads"):
     os.makedirs("uploads")
     
 @app.post("/uploadfile/")
-async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), tags: str = Form(...)):
+async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...)):
     
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
@@ -141,13 +143,13 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     tmp_file_path = FileManager.copy_to_tmp_directory(file_path, filename)
     FileManager.delete_tmp_file(file_path)
     print(tmp_file_path)
-    Subtitle_gen.untertitel(tmp_file_path, filename)
+    Subtitle_gen.untertitel(tmp_file_path, filename, lang)
     output_file = 'videos/' +filename + '/' + filename + '_subtitle.mp4'
     subtitle = 'videos/' +filename + '/' + filename + '_subtitel.srt'
     file_path = 'videos/' +filename + '/' + filename + '.mp4'
-    FileManager.combine_video_with_subtitle(file_path, subtitle, output_file)
+    FileManager.combine_video_with_subtitle(file_path, subtitle, output_file, lang)
     try:
-        DB.insert_video(output_file, tags)
+        DB.insert_video(output_file, "null")
         print("Yes")
     except:
         folder = "/videos/" + file_name
