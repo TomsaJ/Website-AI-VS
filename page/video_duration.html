@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload abgeschlossen</title>
+    <style>
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: darkolivegreen;
+        }
+        nav{
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: darkolivegreen;
+        }
+        li {
+            float: left;
+        }
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        li a:hover:not(.active) {
+            background-color: white;
+            color: #212121;
+        }
+        .active {
+            background-color: #212121;
+        }
+        .active:hover{
+            background-color: white;
+            color: #212121;
+        }
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        footer {
+                position: absolute;
+                background-color: #4caf50;
+                width: 100%;
+            }
+    </style>
+</head>
+<script>
+    function get_height() {
+        return window.innerHeight;
+    }
+
+    function foot() {
+        return get_height() - 46;
+    }
+
+    function setFooterPosition() {
+        var footer = document.getElementById('myFooter');
+        footer.style.marginTop = foot() + 'px';
+    }
+
+    window.onload = setFooterPosition;
+    window.onresize = setFooterPosition; // Adjust footer position if window is resized
+</script>
+<body>
+<footer id="myFooter">
+    <p>halle</p>
+</footer>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/upload/">Upload</a></li>
+    </ul>
+    <h1>Upload abgeschlossen</h1>
+    <p>Datei: {{ file_name }}</p>
+    <p>Speicherort: {{file_location}}</p>
+    <p>Video Dauer: {{video_duration + 1}}</p>
+    <p>Berechnete Dauer: {{duration + 1}}</p>
+    <form id="hiddenForm" action="/uploadfile/" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="file" value="{{ file_name }}">
+        <input type="hidden" name="file_location" value="{{ file_location }}">
+        <input type="hidden" name="video_duration" value="{{ video_duration }}">
+        <input type="hidden" name="duration" value="{{ duration }}">
+        <input type="hidden" name="tags" value="{{ tags }}">
+    </form>
+    <button id="submitButton">Bestätigen und fortfahren</button>
+    <script>
+        document.getElementById('submitButton').addEventListener('click', function() {
+            document.getElementById('hiddenForm').submit();
+        });
+    </script>
+</body>
+</html>

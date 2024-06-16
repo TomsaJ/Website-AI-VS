@@ -1,137 +1,71 @@
+import sys
+import subprocess
+import importlib.util
+
+def install_packages():
+    packages = [
+        "fastapi",
+        "starlette",
+        "uvicorn",
+        "aiofiles",
+        "jinja2"
+    ]
+
+    for package in packages:
+        if not package_installed(package):
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+        else:
+            print(f"{package} ist bereits installiert.")
+
+def package_installed(package_name):
+    """Überprüft, ob ein Paket installiert ist."""
+    package_spec = importlib.util.find_spec(package_name)
+    return package_spec is not None
+install_packages()
 from fastapi import FastAPI, File, UploadFile, BackgroundTasks, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from pathlib import Path
 from starlette.middleware.sessions import SessionMiddleware
 import shutil
 import os
-import sys
 import aiofiles
 import logging
 from fastapi.staticfiles import StaticFiles
 from concurrent.futures import ProcessPoolExecutor
+from fastapi.templating import Jinja2Templates
 
-app = FastAPI()
+app = FastAPI() 
 logging.basicConfig(level=logging.INFO)
 app.add_middleware(SessionMiddleware, secret_key="some-random-secret-key")
-
 # Verzeichnis zum Speichern der hochgeladenen Dateien
 UPLOAD_DIRECTORY = "uploads"
-
-
 # Stelle sicher, dass das Upload-Verzeichnis existiert
 Path(UPLOAD_DIRECTORY).mkdir(parents=True, exist_ok=True)
 
+templates = Jinja2Templates(directory="page")
+# Determine the number of available CPUs and use all but one
+max_workers = max(1, os.cpu_count() - 1)
+executor = ProcessPoolExecutor(max_workers=max_workers)
+app.mount("/videos", StaticFiles(directory="videos"), name="videos")
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads") 
+
 @app.get("/", response_class=HTMLResponse)
-async def main_page():
+async def main_page(request: Request):
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
     from db import DB
-    
-    content = f"""<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/page/css/style.css">
-
-    <title>Datei hochladen</title>
-</head>
-<style>
-    ul {{
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: darkolivegreen;
-}}
-
-nav{{
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: darkolivegreen;
-}}
-
-li {{
-    float: left;
-}}
-
-li a {{
-    display: block;
-    color: white;
-    text-align: center ;
-    padding: 14px 16px;
-    text-decoration: none;
-}}
-
-li a:hover:not(.active) {{
-    background-color: white;
-    color: #212121;
-}}
-
-.active {{
-    background-color: #212121;
-}}
-
-.active:hover{{
-    background-color: white;
-    color: #212121;
-}}
-body{{
-    /*background-color: #212121;*/
-    margin: 0;
-    padding: 0;
-}}
-    footer {{
-        position: absolute;
-        background-color: #4caf50;
-        width: 100%;
-    }}
-</style>
-<script>
-    function get_height() {{
-        return window.innerHeight;
-    }}
-
-    function foot() {{
-        return get_height() - 46;
-    }}
-
-    function setFooterPosition() {{
-        var footer = document.getElementById('myFooter');
-        footer.style.marginTop = foot() + 'px';
-    }}
-
-    window.onload = setFooterPosition;
-    window.onresize = setFooterPosition; // Adjust footer position if window is resized
-</script>
-
-<body>
-<footer id="myFooter">
-    <p>halle</p>
-</footer>
-<ul>
-    <li><a href= "/"> Home </a></li>
-    <li><a href= "/upload/"> Upload </a></li>
-</ul>
-
-    <h1>Datei hochladen</h1>
-
-    {DB.all_videos()}
-
-
-
-</body>
-</html>
-"""
-    return HTMLResponse(content=content)
+    try:
+        videos_html = DB.all_videos()
+        return templates.TemplateResponse("index.html", {"request": request, "videos": videos_html})
+        #return HTMLResponse(content=content, status_code=200)
+    except FileNotFoundError:
+        return HTMLResponse(content="File not found", status_code=404)
 
 
 @app.get("/upload/", response_class=HTMLResponse)
 async def upload_page():
     try:
-        async with aiofiles.open("page/upload.php", "r") as file:
+        async with aiofiles.open("page/upload.html", "r") as file:
             content = await file.read()
             return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
@@ -164,132 +98,27 @@ async def upload_duration(request: Request, file: UploadFile = File(...), tags: 
         duration = ProgramDesign.duration(video_duration, 0.18)
         
         # Erstellen der Antwortseite mit verstecktem Formular zur Weiterleitung
-        content = f"""
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Upload abgeschlossen</title>
-    <style>
-        ul {{
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: darkolivegreen;
-        }}
-        nav{{
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: darkolivegreen;
-        }}
-        li {{
-            float: left;
-        }}
-        li a {{
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-        }}
-        li a:hover:not(.active) {{
-            background-color: white;
-            color: #212121;
-        }}
-        .active {{
-            background-color: #212121;
-        }}
-        .active:hover{{
-            background-color: white;
-            color: #212121;
-        }}
-        body{{
-            margin: 0;
-            padding: 0;
-        }}
-        footer {{
-                position: absolute;
-                background-color: #4caf50;
-                width: 100%;
-            }}
-    </style>
-</head>
-<script>
-    function get_height() {{
-        return window.innerHeight;
-    }}
-
-    function foot() {{
-        return get_height() - 46;
-    }}
-
-    function setFooterPosition() {{
-        var footer = document.getElementById('myFooter');
-        footer.style.marginTop = foot() + 'px';
-    }}
-
-    window.onload = setFooterPosition;
-    window.onresize = setFooterPosition; // Adjust footer position if window is resized
-</script>
-<body>
-<footer id="myFooter">
-    <p>halle</p>
-</footer>
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/upload/">Upload</a></li>
-    </ul>
-    <h1>Upload abgeschlossen</h1>
-    <p>Datei: {file.filename}</p>
-    <p>Speicherort: {file_location}</p>
-    <p>Video Dauer: {video_duration + 1}</p>
-    <p>Berechnete Dauer: {duration + 1}</p>
-    <form id="hiddenForm" action="/uploadfile/" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="file" value="{file.filename}">
-        <input type="hidden" name="file_location" value="{file_location}">
-        <input type="hidden" name="video_duration" value="{video_duration}">
-        <input type="hidden" name="duration" value="{duration}">
-        <input type="hidden" name="tags" value="{"d"}">
-    </form>
-    <button id="submitButton">Bestätigen und fortfahren</button>
-    <script>
-        document.getElementById('submitButton').addEventListener('click', function() {{
-            document.getElementById('hiddenForm').submit();
-        }});
-    </script>
-</body>
-</html>
-"""
-
-        return HTMLResponse(content=content)
-
-
-
     except Exception as e:
         logging.error(f"Fehler beim Hochladen der Datei: {e}")
-        return HTMLResponse(content="Fehler beim Hochladen der Datei", status_code=500)
+    try:
+
+        return templates.TemplateResponse("video_duration.html", {
+        "request": request,
+        "file_name": file.filename,
+        "file_location": file_location,
+        "video_duration": video_duration,
+        "duration": duration,
+        "tags": tags
+    })#return HTMLResponse(content=content, status_code=200)
+    except FileNotFoundError:
+        return HTMLResponse(content="File not found", status_code=404)
 
 # Statische Dateien aus dem 'uploads' Verzeichnis bedienen
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Verzeichnis für Uploads erstellen, falls es nicht existiert
 if not os.path.exists("uploads"):
     os.makedirs("uploads")
     
-
-async def process_file(file_path: Path, filename: str):
-    # Ensure that process_file can be called in a synchronous context
-    tmp_file_path = FileManager.copy_to_tmp_directory(file_path, filename)
-    Subtitle_gen.untertitel(tmp_file_path, filename)
-
-# Determine the number of available CPUs and use all but one
-max_workers = max(1, os.cpu_count() - 1)
-executor = ProcessPoolExecutor(max_workers=max_workers)
-
-app.mount("/videos", StaticFiles(directory="videos"), name="videos")
-
 @app.post("/uploadfile/")
 async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), tags: str = Form(...)):
     
