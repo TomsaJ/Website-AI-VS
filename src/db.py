@@ -50,6 +50,7 @@ class DB:
             return video_elements
         except Error as e:
             print(f"Fehler beim Abrufen der Daten: {e}")
+            return "<p>Empty</p>"
         finally:
             if connection.is_connected():
                 connection.close()

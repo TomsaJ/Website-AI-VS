@@ -41,7 +41,7 @@ app.add_middleware(SessionMiddleware, secret_key="some-random-secret-key")
 UPLOAD_DIRECTORY = "uploads"
 # Stelle sicher, dass das Upload-Verzeichnis existiert
 Path(UPLOAD_DIRECTORY).mkdir(parents=True, exist_ok=True)
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="page")
 # Determine the number of available CPUs and use all but one
 max_workers = max(1, os.cpu_count() - 1)
