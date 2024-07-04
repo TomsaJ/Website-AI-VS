@@ -8,7 +8,8 @@ def install_packages():
         "starlette",
         "uvicorn",
         "aiofiles",
-        "jinja2"
+        "jinja2",
+        #"cupy"
     ]
 
     for package in packages:
@@ -33,6 +34,7 @@ import logging
 from fastapi.staticfiles import StaticFiles
 from concurrent.futures import ProcessPoolExecutor
 from fastapi.templating import Jinja2Templates
+#import cupy as cp
 
 app = FastAPI() 
 logging.basicConfig(level=logging.INFO)
@@ -143,6 +145,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     tmp_file_path = FileManager.copy_to_tmp_directory(file_path, filename)
     FileManager.delete_tmp_file(file_path)
     print(tmp_file_path)
+    #Subtitle_gen.untertitel(tmp_file_path, filename, lang, use_gpu=True)
     Subtitle_gen.untertitel(tmp_file_path, filename, lang)
     output_file = 'videos/' +filename + '/' + filename + '_subtitle.mp4'
     subtitle = 'videos/' +filename + '/' + filename + '_subtitel.srt'
