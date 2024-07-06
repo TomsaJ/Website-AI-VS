@@ -4,10 +4,8 @@ import ffmpeg
 import subprocess
 import json
 import sys
+import zipfile
 from moviepy.editor import VideoFileClip
-src_path = os.path.join(os.path.dirname(__file__), 'src')
-sys.path.append(src_path)
-from db import DB
 
 class FileManager:
     @staticmethod
@@ -93,7 +91,6 @@ class FileManager:
         if not os.path.exists(subtitle_file):
             print("Subtitle file not found.")
             return
-        lang = DB.get_language_code(lang)
         # ffmpeg-python
         #Funktionert leider nicht wie gewünscht. Gerne selber einwenig experimentieren
         #(ffmpeg
@@ -143,3 +140,14 @@ class FileManager:
         video_duration = clip.duration
         clip.close()
         return video_duration
+
+    def create_zip(folder_path):
+    # Erstellen einer ZIP-Datei aus dem Ordner
+        zip_file_path = f"{folder_path}.zip"
+        with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for root, dirs, files in os.walk(folder_path):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, folder_path)
+                    zipf.write(file_path, arcname)
+        return zip_file_path

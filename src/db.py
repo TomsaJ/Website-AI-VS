@@ -2,7 +2,8 @@ import json
 import mysql.connector
 from mysql.connector import Error
 import pymysql 
-
+from file import FileManager
+import os
 
 
 class DB:
@@ -18,13 +19,13 @@ class DB:
         except Error as e:
             print(f"Fehler bei der Datenbankverbindung: {e}")
 
-    def insert_video(path, user):
+    def insert_video(path, user, folder):
         connection = DB.db_conn()
         try:
             with connection.cursor() as cursor:
                 # Convert tags list to JSON string
                 #                     tags_json = json.dumps(tags)
-                cursor.execute("INSERT INTO videos (pfad, user) VALUES (%s, %s)", (path, user))
+                cursor.execute("INSERT INTO videos (pfad, user, folder) VALUES (%s, %s, %s)", (path, user, folder))
                 connection.commit()
         except Error as e:
             print(f"Fehler beim Einfügen der Zeile: {e}")
@@ -56,15 +57,18 @@ class DB:
         else:
             try:
                 with connection.cursor() as cursor:
-                    sql_query = "SELECT pfad FROM videos where user = %s"
+                    sql_query = "SELECT pfad, folder FROM videos WHERE user = %s"
                     cursor.execute(sql_query, (user,))
                     myresult = cursor.fetchall()
-                # Generate HTML video elements for each path
+
                     video_elements = ''.join([
                 f'<video width="320" height="270" controls>'
                 f'<source src="{x[0]}" type="video/mp4">'
                 'Your browser does not support the video tag.'
                 '</video>'
+                f'<a href="{x[0]}" target="_blank" download>Klicken Sie hier, um die Datei herunterzuladen</a>'
+                f'<a href="{x[1]}{FileManager.get_file_name(x[0])}.srt" target="_blank" download>Klicken Sie hier, um die Datei herunterzuladen</a>'
+                f'<a href="{x[1]}{FileManager.get_file_name(x[0])}_all.txt" target="_blank" download>Klicken Sie hier, um die Datei herunterzuladen</a>'
                 for x in myresult
                 ])
                 return video_elements

@@ -162,18 +162,20 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     #Subtitle_gen.untertitel(tmp_file_path, filename, lang, use_gpu=True)
     Subtitle_gen.untertitel(tmp_file_path, filename, lang)
     output_file = 'videos/' +filename + '/' + filename + '_subtitle.mp4'
-    subtitle = 'videos/' +filename + '/' + filename + '_subtitel.srt'
+    subtitle = 'videos/' +filename + '/' + filename + '_subtitle.srt'
     file_path = 'videos/' +filename + '/' + filename + '.mp4'
+    lang = DB.get_language_code(lang)
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file, lang)
+    folder = "videos/" + filename+ "/"
     try:
-        DB.insert_video(output_file, user)
+        DB.insert_video(output_file, user, folder)
         print("Yes")
         request.session['output_file'] = output_file 
     except:
         folder = "/videos/" + file_name
         FileManager.delete_tmp_folder(folder)
         print("No")
-    return RedirectResponse(url="/status", status_code=303)
+    return RedirectResponse(url="/me", status_code=303)
 
 @app.get("/status", response_class=HTMLResponse)
 async def status_page(request: Request):
@@ -225,9 +227,9 @@ async def logout(request: Request):
 
 @app.get("/me", response_class=HTMLResponse)
 async def upload_page(request: Request):
+    username = request.session.get('user')
+    video = DB.videos(username)
     try:
-        username = request.session.get('user')
-        video = DB.videos(username)
         return templates.TemplateResponse("me.html", {"request": request, "video": video})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
