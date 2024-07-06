@@ -37,10 +37,6 @@ from fastapi.staticfiles import StaticFiles
 from concurrent.futures import ProcessPoolExecutor
 from fastapi.templating import Jinja2Templates
 from starlette.config import Config
-src_path = os.path.join(os.path.dirname(__file__), 'src')
-sys.path.append(src_path)
-from db import DB
-from design import ProgramDesign
 #import cupy as cp
 
 # Configure session secret
@@ -236,8 +232,10 @@ async def logout(request: Request):
 async def upload_page(request: Request):
     username = request.session.get('user')
     video = DB.videos(username)
+    style = HTML.sty()
+    header = HTML.header()
     try:
-        return templates.TemplateResponse("me.html", {"request": request, "video": video})
+        return templates.TemplateResponse("me.html", {"request": request, "video": video, "style": style , "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
@@ -247,5 +245,8 @@ if __name__ == "__main__":
     sys.path.append(src_path)
     from subtitle_gen import Subtitle_gen
     from file import FileManager
+    from db import DB
+    from design import ProgramDesign
+    from html_design import HTML
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

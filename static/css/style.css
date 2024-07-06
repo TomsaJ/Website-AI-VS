@@ -39,3 +39,14 @@ li a:hover:not(.active) {
     background-color: white;
     color: #212121;
 }
+
+body{
+    /*background-color: #212121;*/
+    margin: 0;
+    padding: 0;
+}
+footer {
+        position: fixed;
+        background-color: #4caf50;
+        width: 100%;
+    }
