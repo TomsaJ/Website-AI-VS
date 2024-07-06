@@ -9,6 +9,7 @@ def install_packages():
         "uvicorn",
         "aiofiles",
         "jinja2",
+        "fastapi-sessions"
         #"cupy"
     ]
 
@@ -34,7 +35,12 @@ import logging
 from fastapi.staticfiles import StaticFiles
 from concurrent.futures import ProcessPoolExecutor
 from fastapi.templating import Jinja2Templates
+from starlette.config import Config
 #import cupy as cp
+
+# Configure session secret
+config = Config('.env')
+SECRET_KEY = config('SECRET_KEY', cast=str, default='your-secret-key')
 
 app = FastAPI() 
 logging.basicConfig(level=logging.INFO)
@@ -154,20 +160,21 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     try:
         DB.insert_video(output_file, "null")
         print("Yes")
+        request.session['output_file'] = output_file 
     except:
         folder = "/videos/" + file_name
         FileManager.delete_tmp_folder(folder)
         print("No")
-    return RedirectResponse(url="/", status_code=303)
+    return RedirectResponse(url="/status", status_code=303)
 
 @app.get("/status", response_class=HTMLResponse)
 async def status_page(request: Request):
-    # Holen Sie den output_file aus der Sitzung
-    output_file = Request.session.get('output_file')
+    # Get the output_file from the session
+    output_file = request.session.get('output_file')
 
-    # Stellen Sie sicher, dass ein output_file vorhanden ist
+    # Ensure output_file is available
     if output_file:
-        file_location = Path(UPLOAD_DIRECTORY) / output_file
+        file_location = output_file
 
         # Simple HTML to display status
         html_content = f"""
