@@ -1,6 +1,7 @@
 import sys
 import subprocess
 import importlib.util
+import time
 
 def install_packages():
     packages = [
@@ -97,15 +98,21 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
     from file import FileManager
     from design import ProgramDesign
     print(lang)
+    current_time = time.time()
     try:
         # Sicherstellen, dass das Upload-Verzeichnis existiert
         upload_dir = UPLOAD_DIRECTORY
         if not os.path.exists(upload_dir):
             os.makedirs(upload_dir)
 
-        # Dateipfad erstellen
-        file_location = os.path.join(upload_dir, file.filename)
+        # Zeitstempel zum Dateinamen hinzufügen
+        timestamp = str(int(current_time))
+        original_filename = file.filename
+        file_extension = os.path.splitext(original_filename)[1]
+        new_filename = f"{os.path.splitext(original_filename)[0]}_{timestamp}{file_extension}"
         
+        # Dateipfad erstellen
+        file_location = os.path.join(upload_dir, new_filename)
         # Datei speichern
         with open(file_location, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
