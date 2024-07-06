@@ -36,6 +36,10 @@ from fastapi.staticfiles import StaticFiles
 from concurrent.futures import ProcessPoolExecutor
 from fastapi.templating import Jinja2Templates
 from starlette.config import Config
+src_path = os.path.join(os.path.dirname(__file__), 'src')
+sys.path.append(src_path)
+from db import DB
+from design import ProgramDesign
 #import cupy as cp
 
 # Configure session secret
@@ -62,9 +66,14 @@ async def main_page(request: Request):
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
     from db import DB
+    username = request.session.get('user')
+    if username:
+        user =  username
+    else:
+        user= "Noch niemand angemeldet"   
     try:
-        videos_html = DB.all_videos()
-        return templates.TemplateResponse("index.html", {"request": request, "videos": videos_html})
+        videos_html = "<p>"+ "Hallo" + "</p>"
+        return templates.TemplateResponse("index.html", {"request": request, "videos": videos_html, "user": user})
         #return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
@@ -72,18 +81,16 @@ async def main_page(request: Request):
 
 @app.get("/upload/", response_class=HTMLResponse)
 async def upload_page(request: Request):
-    src_path = os.path.join(os.path.dirname(__file__), 'src')
-    sys.path.append(src_path)
-    from db import DB
     try:
+        username = request.session.get('user')
         lang = DB.all_lang()
-        return templates.TemplateResponse("upload.html", {"request": request, "lang": lang})
+        return templates.TemplateResponse("upload.html", {"request": request, "lang": lang, "user": username})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
 # Route, um die Datei zu empfangen und zu verarbeiten
 @app.post("/upload_duration/", response_class=HTMLResponse)
-async def upload_duration(request: Request, file: UploadFile = File(...), lang: str = Form(...)):
+async def upload_duration(request: Request, file: UploadFile = File(...), lang: str = Form(...), user: str = Form(...)):
     # Importieren der Module
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
@@ -118,7 +125,8 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         "file_location": file_location,
         "video_duration": video_duration,
         "duration": duration,
-        "lang": lang
+        "lang": lang,
+        "user": user
     })#return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
@@ -130,7 +138,7 @@ if not os.path.exists("uploads"):
     os.makedirs("uploads")
     
 @app.post("/uploadfile/")
-async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...)):
+async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...), user: str = Form(...)):
     
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
@@ -158,7 +166,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     file_path = 'videos/' +filename + '/' + filename + '.mp4'
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file, lang)
     try:
-        DB.insert_video(output_file, "null")
+        DB.insert_video(output_file, user)
         print("Yes")
         request.session['output_file'] = output_file 
     except:
@@ -194,11 +202,34 @@ async def status_page(request: Request):
         # Handle the case where no output_file is available
         return HTMLResponse(content="<h1>Keine Datei hochgeladen</h1>")
     
+@app.get("/login", response_class=HTMLResponse)
+async def upload_page(request: Request):
+    try:
+        return templates.TemplateResponse("login.html", {"request": request})
+    except FileNotFoundError:
+        return HTMLResponse(content="File not found", status_code=404)
+
+
+@app.post("/login-check")
+async def login(request: Request, username: str =  Form(...), password: str = Form(...)):
+    if DB.login(username, password):
+        request.session['user'] = username
+        return RedirectResponse(url="/me", status_code=303)
+    else:
+        raise HTTPException(status_code=401, detail="Ungültige Anmeldeinformationen")
+
+@app.post("/logout")
+async def logout(request: Request):
+    request.session.clear()
+    return RedirectResponse(url="/", status_code=303)
+
+
+
+    
 if __name__ == "__main__":
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
     from subtitle_gen import Subtitle_gen
     from file import FileManager
-    from design import ProgramDesign
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
