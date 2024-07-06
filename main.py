@@ -223,7 +223,14 @@ async def logout(request: Request):
     request.session.clear()
     return RedirectResponse(url="/", status_code=303)
 
-
+@app.get("/me", response_class=HTMLResponse)
+async def upload_page(request: Request):
+    try:
+        username = request.session.get('user')
+        video = DB.videos(username)
+        return templates.TemplateResponse("me.html", {"request": request, "video": video})
+    except FileNotFoundError:
+        return HTMLResponse(content="File not found", status_code=404)
 
     
 if __name__ == "__main__":

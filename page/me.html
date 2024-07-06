@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/css/style.css') }}">
+    <title>Datei hochladen</title>
+</head>
+<style>
+    body{
+    /*background-color: #212121;*/
+    margin: 0;
+    padding: 0;
+}
+footer {
+        position: absolute;
+        background-color: #4caf50;
+        width: 100%;
+    }
+</style>
+<script>
+    function get_height() {
+        return window.innerHeight;
+    }
+
+    function foot() {
+        return get_height() - 46;
+    }
+
+    function setFooterPosition() {
+        var footer = document.getElementById('myFooter');
+        footer.style.marginTop = foot() + 'px';
+    }
+
+    window.onload = setFooterPosition;
+    window.onresize = setFooterPosition; // Adjust footer position if window is resized
+</script>
+
+<body>
+<footer id="myFooter">
+    <p>halle</p>
+</footer>
+<ul>
+    <li><a href= "/"> Home </a></li>
+    <li><a href= "/upload/"> Upload </a></li>
+</ul>
+
+    <h1>Datei hochladen</h1>
+
+    {{ video | safe }}
+
+    <div style="margin-top: 100px;"> </div>
+
+
+
+</body>
+</html>
