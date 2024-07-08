@@ -2,6 +2,15 @@ import sys
 import subprocess
 import importlib.util
 import time
+import os
+
+# Herausfinden, auf welchem Betriebssystem die Anwendung läuft
+current_os = os.name
+
+if current_os == 'nt':  # nt bedeutet Windows
+    path_separator = '\\'
+else:  # posix bedeutet Unix/Linux/MacOS
+    path_separator = '/'
 
 def install_packages():
     packages = [
@@ -79,6 +88,9 @@ async def main_page(request: Request):
 @app.get("/upload/", response_class=HTMLResponse)
 async def upload_page(request: Request):
     try:
+        src_path = os.path.join(os.path.dirname(__file__), 'src')
+        sys.path.append(src_path)
+        from db import DB
         username = request.session.get('user')
         lang = DB.all_lang()
         return templates.TemplateResponse("upload.html", {"request": request, "lang": lang, "user": username})
