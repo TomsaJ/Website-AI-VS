@@ -7,10 +7,12 @@ import os
 # Herausfinden, auf welchem Betriebssystem die Anwendung läuft
 current_os = os.name
 
+PATH_SEPARATOR = ''
+
 if current_os == 'nt':  # nt bedeutet Windows
-    path_separator = '\\'
+    PATH_SEPARATOR = '\\'
 else:  # posix bedeutet Unix/Linux/MacOS
-    path_separator = '/'
+    PATH_SEPARATOR = '/'
 
 def install_packages():
     packages = [
@@ -176,18 +178,18 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     print(tmp_file_path)
     #Subtitle_gen.untertitel(tmp_file_path, filename, lang, use_gpu=True)
     Subtitle_gen.untertitel(tmp_file_path, filename, lang)
-    output_file = 'videos/' +filename + '/' + filename + '_subtitle.mp4'
-    subtitle = 'videos/' +filename + '/' + filename + '_subtitle.srt'
-    file_path = 'videos/' +filename + '/' + filename + '.mp4'
+    output_file = 'videos' + PATH_SEPARATOR +filename + PATH_SEPARATOR + filename + '_subtitle.mp4'
+    subtitle = 'videos' + PATH_SEPARATOR +filename + PATH_SEPARATOR + filename + '_subtitle.srt'
+    file_path = 'videos' + PATH_SEPARATOR +filename + PATH_SEPARATOR + filename + '.mp4'
     lang = DB.get_language_code(lang)
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file, lang)
-    folder = "videos/" + filename+ "/"
+    folder = "videos" + PATH_SEPARATOR + filename+ PATH_SEPARATOR
     try:
         DB.insert_video(output_file, user, folder)
         print("Yes")
         request.session['output_file'] = output_file 
     except:
-        folder = "/videos/" + file_name
+        folder = PATH_SEPARATOR +"videos"+PATH_SEPARATOR + file_name
         FileManager.delete_tmp_folder(folder)
         print("No")
     return RedirectResponse(url="/me", status_code=303)
