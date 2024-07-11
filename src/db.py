@@ -153,6 +153,32 @@ class DB:
             cursor.close()
             if connection.is_connected():
                 connection.close()  # Schließen Sie die Verbindung zur Datenbank, wenn sie geöffnet ist
+    
+    def delete_Video(time):
+        connection = DB.db_conn()
+        thirty_days_in_milliseconds = 30 * 24 * 60 * 60 * 1000
+        try:
+            cursor = connection.cursor()
+            cursor.execute("SELECT id, folder, time FROM videos")
+            myresult = cursor.fetchall()
+
+            for video in myresult:
+                video_id = video[0]
+                folder_path = video[1]
+                video_time = video[2]
+
+                if time - video_time >= thirty_days_in_milliseconds:
+                    cursor.execute("DELETE FROM videos WHERE id = %s", (video_id,))
+                    connection.commit()
+                    if os.path.isdir(folder_path):
+                        shutil.rmtree(folder_path)
+                        print ("gelöscht")
+        except Error as e:
+            print(f"Fehler beim Abrufen der Daten: {e}")
+            return "<p>Empty</p>"
+        finally:
+            if connection.is_connected():
+                connection.close()
 
 # Example usage
 # DB.insert_video("/path/to/video.mp4", ["tag1", "tag2", "tag3"])
