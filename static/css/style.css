@@ -39,3 +39,22 @@ li a:hover:not(.active) {
     background-color: white;
     color: #212121;
 }
+
+body{
+    /*background-color: #212121;*/
+    margin: 0;
+    padding: 0;
+}
+footer {
+        position: fixed;
+        background-color: darkolivegreen;
+        width: 100%;
+    }
+
+    .zentriert {
+        width: 100%; /* Die Breite des Elements wird auf 100% des Viewports gesetzt */
+        max-width: 1000px; /* Das Element wird nicht breiter als 650 Pixel */
+        margin: 0 auto;
+        text-align: center;
+        padding: 20px;
+    }

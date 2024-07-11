@@ -2,7 +2,9 @@ import json
 import mysql.connector
 from mysql.connector import Error
 import pymysql 
-
+from file import FileManager
+import os
+import shutil
 
 
 class DB:
@@ -18,13 +20,13 @@ class DB:
         except Error as e:
             print(f"Fehler bei der Datenbankverbindung: {e}")
 
-    def insert_video(path, user):
+    def insert_video(path, user, folder, time):
         connection = DB.db_conn()
         try:
             with connection.cursor() as cursor:
                 # Convert tags list to JSON string
                 #                     tags_json = json.dumps(tags)
-                cursor.execute("INSERT INTO videos (pfad, user) VALUES (%s, %s)", (path, user))
+                cursor.execute("INSERT INTO videos (pfad, user, folder, time) VALUES (%s, %s, %s, %s)", (path, user, folder, time))
                 connection.commit()
         except Error as e:
             print(f"Fehler beim Einfügen der Zeile: {e}")
@@ -56,15 +58,25 @@ class DB:
         else:
             try:
                 with connection.cursor() as cursor:
-                    sql_query = "SELECT pfad FROM videos where user = %s"
+                    sql_query = "SELECT pfad, folder FROM videos WHERE user = %s"
                     cursor.execute(sql_query, (user,))
                     myresult = cursor.fetchall()
-                # Generate HTML video elements for each path
+
+                    if not myresult:
+                        return "Noch keine Videos"
+
                     video_elements = ''.join([
                 f'<video width="320" height="270" controls>'
                 f'<source src="{x[0]}" type="video/mp4">'
                 'Your browser does not support the video tag.'
-                '</video>'
+                '</video> <br>'
+                f"""
+                    <button onclick="window.location.href='{x[0]}'" download>Originaldatei herunterladen</button>
+                    <button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}.srt'" download>Untertitel herunterladen (.srt)</button>
+                    <button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}_all.txt'" download>Textdatei herunterladen (.txt)</button>
+                """
+
+
                 for x in myresult
                 ])
                 return video_elements
@@ -148,6 +160,32 @@ class DB:
             cursor.close()
             if connection.is_connected():
                 connection.close()  # Schließen Sie die Verbindung zur Datenbank, wenn sie geöffnet ist
+    
+    def delete_Video(time):
+        connection = DB.db_conn()
+        thirty_days_in_milliseconds = 30 * 24 * 60 * 60 * 1000
+        try:
+            cursor = connection.cursor()
+            cursor.execute("SELECT id, folder, time FROM videos")
+            myresult = cursor.fetchall()
+
+            for video in myresult:
+                video_id = video[0]
+                folder_path = video[1]
+                video_time = video[2]
+
+                if time - video_time >= thirty_days_in_milliseconds:
+                    cursor.execute("DELETE FROM videos WHERE id = %s", (video_id,))
+                    connection.commit()
+                    if os.path.isdir(folder_path):
+                        shutil.rmtree(folder_path)
+                        print ("gelöscht")
+        except Error as e:
+            print(f"Fehler beim Abrufen der Daten: {e}")
+            return "<p>Empty</p>"
+        finally:
+            if connection.is_connected():
+                connection.close()
 
 # Example usage
 # DB.insert_video("/path/to/video.mp4", ["tag1", "tag2", "tag3"])
