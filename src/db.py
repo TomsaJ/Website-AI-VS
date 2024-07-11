@@ -127,32 +127,30 @@ class DB:
             if connection.is_connected():
                 connection.close()  # Schließen Sie die Verbindung zur Datenbank, wenn sie geöffnet ist
 
+    def registration(username, password):
+        connection = DB.db_conn()
+        try:
+            with connection.cursor() as cursor:
+                # Convert tags list to JSON string
+                #                     tags_json = json.dumps(tags)
+                cursor.execute("INSERT INTO user (user, password) VALUES (%s, %s)", (username, password))
+                connection.commit()
+                return True
+        except Error as e:
+            return False
+        finally:
+            connection.close()
+
     def login(username, password):
         connection = DB.db_conn()
         if connection is None:
             return None  # Rückgabe None, um anzuzeigen, dass keine Verbindung hergestellt werden konnte
         try:
-            with connection.cursor() as cursor:
-                sql_query = "SELECT password FROM user WHERE username = %s"
-                cursor.execute(sql_query, (username,))
-                myresult = cursor.fetchone()  # Da wir nur einen Wert erwarten, verwenden wir fetchone()
-                if myresult:
-                    if password == myresult[0]:
-                        return True
-                    else:
-                        return False   # Rückgabe des ersten Elements des Tupels (language_code)
             cursor = connection.cursor()
             sql_query = "SELECT password FROM user WHERE username = %s"
             cursor.execute(sql_query, (username,))
             myresult = cursor.fetchone()
-            if myresult:
-                stored_password = myresult[0]
-                if password == stored_password:
-                    return True
-                else:
-                    return False
-            else:
-                return None  # Rückgabe None, wenn kein Ergebnis gefunden wurde
+            return myresult
         except Error as e:
             print(f"Error fetching data: {e}")
             return None  # Rückgabe None im Falle eines Fehlers
