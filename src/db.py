@@ -62,16 +62,19 @@ class DB:
                     cursor.execute(sql_query, (user,))
                     myresult = cursor.fetchall()
 
+                    if not myresult:
+                        return "Noch keine Videos"
+
                     video_elements = ''.join([
                 f'<video width="320" height="270" controls>'
                 f'<source src="{x[0]}" type="video/mp4">'
                 'Your browser does not support the video tag.'
                 '</video> <br>'
                 f"""
-<button onclick="window.location.href='{x[0]}'" download>Originaldatei herunterladen</button>
-<button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}.srt'" download>Untertitel herunterladen (.srt)</button>
-<button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}_all.txt'" download>Textdatei herunterladen (.txt)</button>
-"""
+                    <button onclick="window.location.href='{x[0]}'" download>Originaldatei herunterladen</button>
+                    <button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}.srt'" download>Untertitel herunterladen (.srt)</button>
+                    <button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}_all.txt'" download>Textdatei herunterladen (.txt)</button>
+                """
 
 
                 for x in myresult

@@ -258,8 +258,9 @@ async def upload_page(request: Request):
     video = DB.videos(username)
     style = HTML.sty()
     header = HTML.header()
+    footer = HTML.foot()
     try:
-        return templates.TemplateResponse("me.html", {"request": request, "user": username, "video": video, "style": style , "header": header})
+        return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": username, "video": video, "style": style , "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 

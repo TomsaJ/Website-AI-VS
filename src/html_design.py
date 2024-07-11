@@ -15,7 +15,7 @@ class HTML:
         footer {
             position: fixed;
             bottom: 0;
-            background-color: #4caf50;
+            background-color: darkolivegreen;
             width: 100%;
             padding: 10px 0;
             text-align: center;
@@ -24,4 +24,12 @@ class HTML:
         }
         </style>
             '''
+        return content
+    
+    def foot():
+        content = '''
+        <footer id="myFooter">
+        <p style="float:right; margin-right: 10px; color: white"> Developer: <a href="https://github.com/TomsaJ" style="color: white;">TomsaJ</a> and <a href="https://github.com/LaRocc" style="color: white;">LaRocc</a></p>
+        </footer>
+        '''
         return content
