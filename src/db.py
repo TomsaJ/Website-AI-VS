@@ -4,6 +4,7 @@ from mysql.connector import Error
 import pymysql 
 from file import FileManager
 import os
+import shutil
 
 
 class DB:
@@ -19,13 +20,13 @@ class DB:
         except Error as e:
             print(f"Fehler bei der Datenbankverbindung: {e}")
 
-    def insert_video(path, user, folder):
+    def insert_video(path, user, folder, time):
         connection = DB.db_conn()
         try:
             with connection.cursor() as cursor:
                 # Convert tags list to JSON string
                 #                     tags_json = json.dumps(tags)
-                cursor.execute("INSERT INTO videos (pfad, user, folder) VALUES (%s, %s, %s)", (path, user, folder))
+                cursor.execute("INSERT INTO videos (pfad, user, folder, time) VALUES (%s, %s, %s, %s)", (path, user, folder, time))
                 connection.commit()
         except Error as e:
             print(f"Fehler beim Einfügen der Zeile: {e}")

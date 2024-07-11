@@ -74,6 +74,10 @@ async def main_page(request: Request):
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
     from db import DB
+    import time
+    current_time = time.time()
+    time = int(current_time)
+    DB.delete_Video(time)
     username = request.session.get('user')
     if username:
         user =  username
@@ -107,6 +111,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
     sys.path.append(src_path)
     from file import FileManager
     from design import ProgramDesign
+    import time
     print(lang)
     current_time = time.time()
     try:
@@ -143,7 +148,8 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         "video_duration": video_duration,
         "duration": duration,
         "lang": lang,
-        "user": user
+        "user": user,
+        "time": timestamp
     })#return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
@@ -155,7 +161,7 @@ if not os.path.exists("uploads"):
     os.makedirs("uploads")
     
 @app.post("/uploadfile/")
-async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...), user: str = Form(...)):
+async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...), user: str = Form(...), time: str= Form(...)):
     
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
@@ -185,7 +191,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file, lang)
     folder = "videos" + PATH_SEPARATOR + filename+ PATH_SEPARATOR
     try:
-        DB.insert_video(output_file, user, folder)
+        DB.insert_video(output_file, user, folder, time)
         print("Yes")
         request.session['output_file'] = output_file 
     except:
@@ -244,12 +250,16 @@ async def logout(request: Request):
 
 @app.get("/me", response_class=HTMLResponse)
 async def upload_page(request: Request):
+    src_path = os.path.join(os.path.dirname(__file__), 'src')
+    sys.path.append(src_path)
+    from db import DB
+    from html_design import HTML
     username = request.session.get('user')
     video = DB.videos(username)
     style = HTML.sty()
     header = HTML.header()
     try:
-        return templates.TemplateResponse("me.html", {"request": request, "video": video, "style": style , "header": header})
+        return templates.TemplateResponse("me.html", {"request": request, "user": username, "video": video, "style": style , "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
