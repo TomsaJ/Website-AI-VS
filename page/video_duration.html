@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload abgeschlossen</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/css/style.css') }}">
+    <title>Datei hochladen</title>
     <style>
 body{
     /*background-color: #212121;*/
@@ -40,6 +43,7 @@ body{
         <li><a href="/">Home</a></li>
         <li><a href="/upload/">Upload</a></li>
     </ul>
+    <div class="zentriert">
     <h1>Upload abgeschlossen</h1>
     <p>Datei: {{ file_name }}</p>
     <p>Speicherort: {{file_location}}</p>
@@ -54,11 +58,12 @@ body{
         <input type="hidden" name="user" value="{{ user }}">
         <input type="hidden" name="time" value="{{time}}">
     </form>
-    <button id="submitButton">Bestätigen und fortfahren</button>
+    <button id="submitButton">Bestätigen und fortfahren</button></div>
     <script>
         document.getElementById('submitButton').addEventListener('click', function() {
             document.getElementById('hiddenForm').submit();
         });
     </script>
+    
 </body>
 </html>
