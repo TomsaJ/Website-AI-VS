@@ -54,7 +54,7 @@ src_path = os.path.join(os.path.dirname(__file__), 'src')
 sys.path.append(src_path)
 from subtitle_gen import Subtitle_gen
 from file import FileManager
-from json import JS
+from js import JS
 
 # Configure session secret
 config = Config('.env')
@@ -79,7 +79,7 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 async def main_page(request: Request):
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
-    from json import JS
+    from js import JS
     import time
     current_time = time.time()
     time = int(current_time)
@@ -102,7 +102,7 @@ async def upload_page(request: Request):
     try:
         src_path = os.path.join(os.path.dirname(__file__), 'src')
         sys.path.append(src_path)
-        from json import JS
+        from js import JS
         username = request.session.get('user')
         lang = JS.all_lang()
         return templates.TemplateResponse("upload.html", {"request": request, "lang": lang, "user": username})
@@ -174,7 +174,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     from file import FileManager
     from design import ProgramDesign
     from subtitle_gen import Subtitle_gen
-    from json import JS
+    from js import JS
 
     # Sicherstellen, dass das Upload-Verzeichnis existiert
     if not os.path.exists(UPLOAD_DIRECTORY):
@@ -258,7 +258,7 @@ async def logout(request: Request):
 async def upload_page(request: Request):
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
-    from json import JS
+    from js import JS
     from html_design import HTML
     username = request.session.get('user')
     video = JS.videos(username)
@@ -276,7 +276,7 @@ if __name__ == "__main__":
     sys.path.append(src_path)
     from subtitle_gen import Subtitle_gen
     from file import FileManager
-    from json import JS
+    from js import JS
     from design import ProgramDesign
     from html_design import HTML
     import uvicorn
