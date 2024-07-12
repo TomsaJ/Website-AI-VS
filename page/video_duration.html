@@ -58,12 +58,27 @@ body{
         <input type="hidden" name="user" value="{{ user }}">
         <input type="hidden" name="time" value="{{time}}">
     </form>
-    <button id="submitButton">Bestätigen und fortfahren</button></div>
+    <div id="hiddenForm">
+        <!-- Your form contents go here -->
+    </div>
+    
+    <button id="submitButton">Bestätigen und fortfahren</button>
+    <div id="loadingAnimation" class="circ" style="display:none;">
+        <div class="load">Loading . . . </div>
+        <div class="hands"></div>
+        <div class="body"></div>
+        <div class="head">
+            <div class="eye"></div>
+        </div>
+    </div>
+    
     <script>
         document.getElementById('submitButton').addEventListener('click', function() {
+            document.getElementById('loadingAnimation').style.display = 'block';
             document.getElementById('hiddenForm').submit();
         });
     </script>
+    
     
 </body>
 </html>
