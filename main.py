@@ -50,6 +50,12 @@ from fastapi.templating import Jinja2Templates
 from starlette.config import Config
 #import cupy as cp
 
+src_path = os.path.join(os.path.dirname(__file__), 'src')
+sys.path.append(src_path)
+from subtitle_gen import Subtitle_gen
+from file import FileManager
+from json import JS
+
 # Configure session secret
 config = Config('.env')
 SECRET_KEY = config('SECRET_KEY', cast=str, default='your-secret-key')
@@ -73,11 +79,11 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 async def main_page(request: Request):
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
-    from db import DB
+    from json import JS
     import time
     current_time = time.time()
     time = int(current_time)
-    DB.delete_Video(time)
+    JS.delete_Video(time)
     username = request.session.get('user')
     if username:
         user =  username
@@ -96,9 +102,9 @@ async def upload_page(request: Request):
     try:
         src_path = os.path.join(os.path.dirname(__file__), 'src')
         sys.path.append(src_path)
-        from db import DB
+        from json import JS
         username = request.session.get('user')
-        lang = DB.all_lang()
+        lang = JS.all_lang()
         return templates.TemplateResponse("upload.html", {"request": request, "lang": lang, "user": username})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
@@ -168,7 +174,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     from file import FileManager
     from design import ProgramDesign
     from subtitle_gen import Subtitle_gen
-    from db import DB
+    from json import JS
 
     # Sicherstellen, dass das Upload-Verzeichnis existiert
     if not os.path.exists(UPLOAD_DIRECTORY):
@@ -187,11 +193,11 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     output_file = 'videos' + PATH_SEPARATOR +filename + PATH_SEPARATOR + filename + '_subtitle.mp4'
     subtitle = 'videos' + PATH_SEPARATOR +filename + PATH_SEPARATOR + filename + '_subtitle.srt'
     file_path = 'videos' + PATH_SEPARATOR +filename + PATH_SEPARATOR + filename + '.mp4'
-    lang = DB.get_language_code(lang)
+    lang = JS.get_language_code(lang)
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file, lang)
     folder = "videos" + PATH_SEPARATOR + filename+ PATH_SEPARATOR
     try:
-        DB.insert_video(output_file, user, folder, time)
+        JS.insert_video(output_file, user, folder, time)
         print("Yes")
         request.session['output_file'] = output_file 
     except:
@@ -237,7 +243,7 @@ async def upload_page(request: Request):
 
 @app.post("/login-check")
 async def login(request: Request, username: str =  Form(...), password: str = Form(...)):
-    if DB.login(username, password):
+    if JS.login(username, password):
         request.session['user'] = username
         return RedirectResponse(url="/me", status_code=303)
     else:
@@ -252,10 +258,10 @@ async def logout(request: Request):
 async def upload_page(request: Request):
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
-    from db import DB
+    from json import JS
     from html_design import HTML
     username = request.session.get('user')
-    video = DB.videos(username)
+    video = JS.videos(username)
     style = HTML.sty()
     header = HTML.header()
     footer = HTML.foot()
@@ -270,7 +276,7 @@ if __name__ == "__main__":
     sys.path.append(src_path)
     from subtitle_gen import Subtitle_gen
     from file import FileManager
-    from db import DB
+    from json import JS
     from design import ProgramDesign
     from html_design import HTML
     import uvicorn
