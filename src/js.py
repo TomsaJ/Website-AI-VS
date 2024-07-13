@@ -5,17 +5,6 @@ import shutil
 
 
 class JS:
-    def db_conn():
-        try:
-            connection = mysql.connector.connect(
-                host="localhost",
-                user="admin",
-                passwd="admin",
-                database="WS-AI-VS"
-            )
-            return connection
-        except Error as e:
-            print(f"Fehler bei der Datenbankverbindung: {e}")
 
     def insert_video(path, user, folder, time):
         video_data = {
@@ -25,9 +14,9 @@ class JS:
         "time": time
     }
 
-        if os.path.exists('video.json'):
+        if os.path.exists('data/video.json'):
         # Lade vorhandene Videos
-            with open('video.json', 'r') as file:
+            with open('data/video.json', 'r') as file:
                 videos = json.load(file)
         else:
         # Wenn die Datei nicht existiert, erstelle eine neue Liste
@@ -37,13 +26,13 @@ class JS:
         videos.append(video_data)
 
     # Speichere die aktualisierte Liste in der video.json Datei
-        with open('video.json', 'w') as file:
+        with open('data/video.json', 'w') as file:
             json.dump(videos, file, indent=4)
 
     def videos(user):
-        if os.path.exists('video.json'):
+        if os.path.exists('data/video.json'):
         # Lade vorhandene Videos
-            with open('video.json', 'r') as file:
+            with open('data/video.json', 'r') as file:
                 all_videos = json.load(file)
         else:
         # Wenn die Datei nicht existiert, gib eine Nachricht zurück
@@ -81,9 +70,9 @@ class JS:
             return video_elements
     
     def all_lang():
-        if os.path.exists('language.json'):
+        if os.path.exists('data/language.json'):
         # Lade vorhandene Sprachen
-            with open('language.json', 'r') as file:
+            with open('data/language.json', 'r') as file:
                 languages = json.load(file)
         else:
         # Wenn die Datei nicht existiert, gib eine leere Zeichenkette zurück
@@ -91,16 +80,16 @@ class JS:
 
     # Erstelle die HTML-Option-Elemente für die Sprachen
         language_elements = ''.join([
-            f'<option value="{language.capitalize()}">{language.capitalize()}</option>'
+        f'<option type= "hidden" value="de">de</option>'
         for language in languages
     ])
 
         return language_elements
     
     def get_language_code(lang):
-        if os.path.exists('language.json'):
+        if os.path.exists('data/language.json'):
         # Lade vorhandene Sprachen und ihre Codes
-            with open('language.json', 'r') as file:
+            with open('data/language.json', 'r') as file:
                 data = json.load(file)
                 languages = data.get('languages', [])
         else:
@@ -116,7 +105,7 @@ class JS:
         return None
 
     def login(username, password):
-        if os.path.exists('users.json'):
+        if os.path.exists('data/users.json'):
         # Lade vorhandene Benutzerdaten
             with open('users.json', 'r') as file:
                 data = json.load(file)
@@ -140,9 +129,9 @@ class JS:
         thirty_days_in_seconds = 30 * 24 * 60 * 60
         thirty_days_in_milliseconds = thirty_days_in_seconds * 1000
 
-        if os.path.exists('video.json'):
+        if os.path.exists('data/video.json'):
         # Lade vorhandene Videos
-            with open('video.json', 'r') as file:
+            with open('data/video.json', 'r') as file:
                 videos = json.load(file)
         else:
         # Wenn die Datei nicht existiert, gib eine Nachricht zurück
@@ -168,7 +157,7 @@ class JS:
                     print(f"Ordner {folder_path} wurde gelöscht.")
 
         # Speichere die aktualisierte Liste in der video.json Datei
-            with open('video.json', 'w') as file:
+            with open('data/video.json', 'w') as file:
                 json.dump(videos, file, indent=4)
 
             return f"{len(videos_to_delete)} Videos und Ordner wurden erfolgreich gelöscht."
