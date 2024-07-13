@@ -140,7 +140,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         
         # Video-Dauer berechnen
         video_duration = FileManager.duration_video(file_location)
-        duration = ProgramDesign.duration(video_duration, 0.18)
+        duration = ProgramDesign.duration(video_duration, 0.34)
         
         # Erstellen der Antwortseite mit verstecktem Formular zur Weiterleitung
     except Exception as e:
@@ -197,6 +197,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file, lang)
     folder = "videos" + PATH_SEPARATOR + filename+ PATH_SEPARATOR
     try:
+        time = int(time)
         JS.insert_video(output_file, user, folder, time)
         print("Yes")
         request.session['output_file'] = output_file 
@@ -204,7 +205,8 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
         folder = PATH_SEPARATOR +"videos"+PATH_SEPARATOR + file_name
         FileManager.delete_tmp_folder(folder)
         print("No")
-    return RedirectResponse(url="/me", status_code=303)
+    html_content = f"""<meta http-equiv="refresh" content="0; URL=https://www.ki.fh-swf.de/jupyterhub/user/jutom001/vscode/proxy/8000/me">"""
+    return HTMLResponse(content=html_content)
 
 @app.get("/status", response_class=HTMLResponse)
 async def status_page(request: Request):
@@ -243,16 +245,16 @@ async def upload_page(request: Request):
 
 @app.post("/login-check")
 async def login(request: Request, username: str =  Form(...), password: str = Form(...)):
-    if JS.login(username, password):
+    if User.login(username, password):
         request.session['user'] = username
-        return RedirectResponse(url="/me", status_code=303)
+        return RedirectResponse(url="/jupyterhub/user/jutom001/vscode/proxy/8000/me/", status_code=303)
     else:
-        raise HTTPException(status_code=401, detail="Ungültige Anmeldeinformationen")
+        return("Fehler")
 
 @app.post("/logout")
 async def logout(request: Request):
     request.session.clear()
-    return RedirectResponse(url="/", status_code=303)
+    return RedirectResponse(url="/jupyterhub/user/jutom001/vscode/proxy/8000/", status_code=303)
 
 @app.get("/me", response_class=HTMLResponse)
 async def upload_page(request: Request):
@@ -279,5 +281,6 @@ if __name__ == "__main__":
     from js import JS
     from design import ProgramDesign
     from html_design import HTML
+    from user import User
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
