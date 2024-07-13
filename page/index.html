@@ -12,11 +12,6 @@
     margin: 0;
     padding: 0;
 }
-footer {
-        position: fixed;
-        background-color: #4caf50;
-        width: 100%;
-    }
 </style>
 <script>
     function get_height() {
@@ -37,13 +32,8 @@ footer {
 </script>
 
 <body>
-<footer id="myFooter">
-    <p>halle</p>
-</footer>
-<ul>
-    <li><a href= "/"> Home </a></li>
-    <li><a href= "/upload/"> Upload </a></li>
-</ul>
+    {{foot | safe}}
+    {{header | safe}}
 
     <h1>Datei hochladen</h1>
 

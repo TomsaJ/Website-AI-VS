@@ -3,6 +3,7 @@ class HTML:
         content = '''<ul>
         <li><a href="/">Home</a></li>
         <li><a href="/upload/">Upload</a></li>
+        <li><a href="/me">My Videos</a></li>
     '''
         if logged_in:
             content += '''<li style="float: right"><a href="/logout">Logout</a></li>'''

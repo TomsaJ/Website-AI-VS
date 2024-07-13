@@ -79,13 +79,18 @@ async def main_page(request: Request):
     time = int(current_time)
     DB.delete_Video(time)
     username = request.session.get('user')
+    logged_in = False
+    username = request.session.get('user')
     if username:
         user =  username
+        logged_in = True
     else:
-        user= "Noch niemand angemeldet"   
+        user= "Noch niemand angemeldet"  
+    header = HTML.header(logged_in)
+    footer = HTML.foot()
     try:
         videos_html = "<p>"+ "Hallo" + "</p>"
-        return templates.TemplateResponse("index.html", {"request": request, "videos": videos_html, "user": user})
+        return templates.TemplateResponse("index.html", {"request": request, "videos": videos_html, "user": user, "foot":footer, "header": header})
         #return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
@@ -93,13 +98,20 @@ async def main_page(request: Request):
 
 @app.get("/upload/", response_class=HTMLResponse)
 async def upload_page(request: Request):
+    logged_in = False
+    username = request.session.get('user')
+    if username:
+        logged_in = True
+    header = HTML.header(logged_in)
+    footer = HTML.foot()
     try:
         src_path = os.path.join(os.path.dirname(__file__), 'src')
         sys.path.append(src_path)
         from db import DB
         username = request.session.get('user')
         lang = DB.all_lang()
-        return templates.TemplateResponse("upload.html", {"request": request, "lang": lang, "user": username})
+        
+        return templates.TemplateResponse("upload.html", {"request": request, "lang": lang, "user": username, "foot":footer, "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
@@ -114,6 +126,12 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
     import time
     print(lang)
     current_time = time.time()
+    logged_in = False
+    username = request.session.get('user')
+    if username:
+        logged_in = True
+    header = HTML.header(logged_in)
+    footer = HTML.foot()
     try:
         # Sicherstellen, dass das Upload-Verzeichnis existiert
         upload_dir = UPLOAD_DIRECTORY
@@ -149,7 +167,8 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         "duration": duration,
         "lang": lang,
         "user": user,
-        "time": timestamp
+        "time": timestamp,
+        "foot":footer, "header": header
     })#return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
@@ -266,11 +285,21 @@ async def upload_page(request: Request):
     username = request.session.get('user')
     video = DB.videos(username)
     style = HTML.sty()
-    header = HTML.header(True)
-    
+    username = request.session.get('user')
+    logged_in = False
+    if username:
+        user = "Willkomen, "
+        user +=  username
+        logged_in = True
+    else:
+        user = '''<h2>Melde dich bitte an!</h2><br>
+<button onclick="window.location.href='/login'">Anmelden</button>'''
+    header = HTML.header(logged_in)
     footer = HTML.foot()
     try:
-        return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": username, "video": video, "style": style , "header": header})
+        if logged_in:
+            return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": user, "video": video, "style": style , "header": header})
+        else: return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": user, "video": "", "style": style , "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
