@@ -229,8 +229,17 @@ async def status_page(request: Request):
     
 @app.get("/login", response_class=HTMLResponse)
 async def upload_page(request: Request):
+    src_path = os.path.join(os.path.dirname(__file__), 'src')
+    sys.path.append(src_path)
+    from html_design import HTML
+    logged_in = False
+    username = request.session.get('user')
+    if username:
+        logged_in = True
+    header = HTML.header(logged_in)
+    footer = HTML.foot()
     try:
-        return templates.TemplateResponse("login.html", {"request": request})
+        return templates.TemplateResponse("login.html", {"request": request,  "foot":footer, "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
@@ -243,7 +252,7 @@ async def login(request: Request, username: str =  Form(...), password: str = Fo
     else:
         raise HTTPException(status_code=401, detail="Ungültige Anmeldeinformationen")
 
-@app.post("/logout")
+@app.get("/logout")
 async def logout(request: Request):
     request.session.clear()
     return RedirectResponse(url="/", status_code=303)
@@ -257,7 +266,8 @@ async def upload_page(request: Request):
     username = request.session.get('user')
     video = DB.videos(username)
     style = HTML.sty()
-    header = HTML.header()
+    header = HTML.header(True)
+    
     footer = HTML.foot()
     try:
         return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": username, "video": video, "style": style , "header": header})

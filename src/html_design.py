@@ -1,9 +1,15 @@
 class HTML:
-    def header():
-        content = ''' <ul>
-        <li><a href= "/"> Home </a></li>
-        <li><a href= "/upload/"> Upload </a></li>
-        </ul>  '''
+    def header(logged_in):
+        content = '''<ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/upload/">Upload</a></li>
+    '''
+        if logged_in:
+            content += '''<li style="float: right"><a href="/logout">Logout</a></li>'''
+        else:
+            content += '''<li style="float: right"><a href="/login">Login</a></li>'''
+    
+        content += '''</ul>'''
         return content
     def sty():
         content = '''
