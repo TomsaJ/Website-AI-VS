@@ -3,7 +3,7 @@ ul {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: darkolivegreen;
+    background-color: #3366cc;
 }
 
 nav{
@@ -11,7 +11,7 @@ nav{
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: darkolivegreen;
+    background-color: #3366cc;
 }
 
 li {
@@ -47,7 +47,7 @@ body{
 }
 footer {
         position: fixed;
-        background-color: darkolivegreen;
+        background-color: #3366cc;
         width: 100%;
     }
 
