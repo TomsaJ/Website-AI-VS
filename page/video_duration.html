@@ -8,11 +8,7 @@ body{
     margin: 0;
     padding: 0;
 }
-        footer {
-                position: absolute;
-                background-color: #4caf50;
-                width: 100%;
-            }
+        
     </style>
 </head>
 <script>
@@ -33,13 +29,8 @@ body{
     window.onresize = setFooterPosition; // Adjust footer position if window is resized
 </script>
 <body>
-<footer id="myFooter">
-    <p>halle</p>
-</footer>
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/upload/">Upload</a></li>
-    </ul>
+    {{foot | safe}}
+    {{header | safe}}
     <h1>Upload abgeschlossen</h1>
     <p>Datei: {{ file_name }}</p>
     <p>Speicherort: {{file_location}}</p>

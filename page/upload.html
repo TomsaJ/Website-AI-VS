@@ -12,11 +12,20 @@
     margin: 0;
     padding: 0;
 }
-    footer {
-        position: absolute;
-        background-color: #4caf50;
-        width: 100%;
-    }
+    #progressBar {
+            width: 100%;
+            background-color: #f3f3f3;
+            margin-top: 10px;
+        }
+
+        #progressBarFill {
+            width: 0%;
+            height: 30px;
+            background-color: #4caf50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+        }
 </style>
     <script>
         function get_height() {
@@ -36,30 +45,9 @@
         window.onresize = setFooterPosition; // Adjust footer position if window is resized
     </script>
 <body>
-<footer id="myFooter">
-    <p>halle</p>
-</footer>
-<ul>
-    <li><a href= "/"> Home </a></li>
-    <li><a href= "/upload/"> Upload </a></li>
-</ul>
+    {{foot | safe}}
+    {{header | safe}}
     <title>MP4 Datei hochladen</title>
-    <style>
-        #progressBar {
-            width: 100%;
-            background-color: #f3f3f3;
-            margin-top: 10px;
-        }
-
-        #progressBarFill {
-            width: 0%;
-            height: 30px;
-            background-color: #4caf50;
-            text-align: center;
-            line-height: 30px;
-            color: white;
-        }
-    </style>
 </head>
 <body>
     <h1>MP4 Datei hochladen</h1>
