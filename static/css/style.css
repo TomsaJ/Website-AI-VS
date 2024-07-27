@@ -1,9 +1,15 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial ;
+}
+
 ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: darkolivegreen;
+    background-color: #3366cc;
 }
 
 nav{
@@ -11,7 +17,7 @@ nav{
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: darkolivegreen;
+    background-color: #3366cc;
 }
 
 li {
@@ -46,10 +52,15 @@ body{
     padding: 0;
 }
 footer {
-        position: fixed;
-        background-color: darkolivegreen;
-        width: 100%;
-    }
+  position: fixed;
+  bottom: 0;
+  background-color: #3366cc;
+  width: 100%;
+  padding: 10px 0;
+  text-align: center;
+  color: white;
+  font-size: 14px;
+}
 
     .zentriert {
         width: 100%; /* Die Breite des Elements wird auf 100% des Viewports gesetzt */

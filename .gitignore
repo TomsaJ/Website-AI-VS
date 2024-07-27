@@ -9,3 +9,4 @@ src/time.csv
 *.srt
 src/db_config.json
 .idea/
+venv
