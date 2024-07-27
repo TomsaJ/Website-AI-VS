@@ -67,7 +67,25 @@ templates = Jinja2Templates(directory="page")
 max_workers = max(1, os.cpu_count() - 1)
 executor = ProcessPoolExecutor(max_workers=max_workers)
 app.mount("/videos", StaticFiles(directory="videos"), name="videos")
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads") 
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+def timeout(request):
+    time_request = request.session.get('time')
+    thirty_m = 3 * 60
+    current_time = int(time.time())
+    tmp = current_time-time_request
+    print(tmp)
+    print (thirty_m)
+    if(tmp < thirty_m):
+        refresh(request)
+        return
+    else:
+        request.session.clear()
+        return
+
+def refresh(request):
+    request.session['time'] = int(time.time())
+    return
 
 @app.get("/", response_class=HTMLResponse)
 async def main_page(request: Request):
@@ -78,12 +96,12 @@ async def main_page(request: Request):
     current_time = time.time()
     time = int(current_time)
     DB.delete_Video(time)
-    username = request.session.get('user')
     logged_in = False
     username = request.session.get('user')
     if username:
         user =  username
         logged_in = True
+        timeout(request)
     else:
         user= "Noch niemand angemeldet"  
     header = HTML.header(logged_in)
@@ -267,6 +285,10 @@ async def upload_page(request: Request):
 async def login(request: Request, username: str =  Form(...), password: str = Form(...)):
     if DB.login(username, password):
         request.session['user'] = username
+        request.session['time'] = int(time.time())
+
+# Print the stored timestamp
+        print(request.session['time'])
         return RedirectResponse(url="/me", status_code=303)
     else:
         raise HTTPException(status_code=401, detail="Ungültige Anmeldeinformationen")
@@ -284,7 +306,6 @@ async def upload_page(request: Request):
     from html_design import HTML
     username = request.session.get('user')
     video = DB.videos(username)
-    style = HTML.sty()
     username = request.session.get('user')
     logged_in = False
     if username:
@@ -298,8 +319,8 @@ async def upload_page(request: Request):
     footer = HTML.foot()
     try:
         if logged_in:
-            return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": user, "video": video, "style": style , "header": header})
-        else: return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": user, "video": "", "style": style , "header": header})
+            return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": user, "video": video, "header": header})
+        else: return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": user, "video": "",  "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
@@ -313,4 +334,4 @@ if __name__ == "__main__":
     from design import ProgramDesign
     from html_design import HTML
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=30000)

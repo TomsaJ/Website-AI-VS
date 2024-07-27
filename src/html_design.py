@@ -12,26 +12,6 @@ class HTML:
     
         content += '''</ul>'''
         return content
-    def sty():
-        content = '''
-        <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-        footer {
-            position: fixed;
-            bottom: 0;
-            background-color: darkolivegreen;
-            width: 100%;
-            padding: 10px 0;
-            text-align: center;
-            color: white;
-            font-size: 14px;
-        }
-        </style>
-            '''
-        return content
     
     def foot():
         content = '''
