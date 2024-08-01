@@ -2,13 +2,11 @@
 
 __pycache__/
 tmp/
-video/
 .ipynb_checkpoints/
 src/.ipynb_checkpoints/
 src/time.csv
-uploads/
 *.mp4
 *.srt
-*.txt
 src/db_config.json
 .idea/
+venv
