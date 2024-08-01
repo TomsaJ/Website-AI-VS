@@ -1,38 +1,50 @@
+import os
 import json
 import mysql.connector
 from mysql.connector import Error
 import pymysql 
 from file import FileManager
-import os
 import shutil
 
 
 class DB:
+    @staticmethod
     def db_conn():
         try:
             connection = mysql.connector.connect(
-                host="localhost",
-                user="admin",
-                passwd="admin",
-                database="WS-AI-VS"
+                host=os.getenv("DB_HOST", "localhost"),
+                user=os.getenv("DB_USER", "admin"),
+                passwd=os.getenv("DB_PASSWORD", "admin"),
+                database=os.getenv("DB_NAME", "WS-AI-VS")
             )
-            return connection
+            if connection.is_connected():
+                return connection
+            else:
+                print("Connection failed")
+                return None
         except Error as e:
             print(f"Fehler bei der Datenbankverbindung: {e}")
+            return None
+
 
     def insert_video(path, user, folder, time):
+
         connection = DB.db_conn()
+        if connection is None:
+            return "Connection to the database failed."
         try:
             with connection.cursor() as cursor:
                 # Convert tags list to JSON string
                 #                     tags_json = json.dumps(tags)
                 cursor.execute("INSERT INTO videos (pfad, user, folder, time) VALUES (%s, %s, %s, %s)", (path, user, folder, time))
+
                 connection.commit()
         except Error as e:
             print(f"Fehler beim Einfügen der Zeile: {e}")
         finally:
             connection.close()
 
+    @staticmethod
     def videos(user):
         connection = DB.db_conn()
         if user == "null":
@@ -181,9 +193,8 @@ class DB:
         except Error as e:
             print(f"Fehler beim Abrufen der Daten: {e}")
             return "<p>Empty</p>"
+
         finally:
             if connection.is_connected():
                 connection.close()
 
-# Example usage
-# DB.insert_video("/path/to/video.mp4", ["tag1", "tag2", "tag3"])

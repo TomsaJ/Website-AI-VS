@@ -1,0 +1,16 @@
+
+ffmpeg
+moviepy
+mysql
+flask
+requests
+whisper
+torch
+uvicorn
+numpy
+pandas
+opencv-python
+librosa
+matplotlib
+mysql-connector-python
+pymysql
