@@ -42,10 +42,5 @@ ALTER TABLE `videos`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 COMMIT;
 </code>
-<br>
-<br>
-Schaue in die [SQL-Datei für die Language](sql/language.sql) dort kann zum einen die Tabelle erzeugt werden und zum anderen die Sprachen hinzugefügt werden.
-
-
 
 

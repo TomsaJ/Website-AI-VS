@@ -3,8 +3,6 @@ import shutil
 import ffmpeg
 import subprocess
 import json
-import sys
-import zipfile
 from moviepy.editor import VideoFileClip
 
 class FileManager:
@@ -83,7 +81,7 @@ class FileManager:
         convert_file.convert()
 
     @staticmethod
-    def combine_video_with_subtitle(video_file, subtitle_file, output_file, lang):
+    def combine_video_with_subtitle(video_file, subtitle_file, output_file):
     # Überprüfen, ob die Dateien existieren
         if not os.path.exists(video_file):
             print("Video file not found.")
@@ -99,20 +97,18 @@ class FileManager:
         #.output(subtitle_file, **{'metadata:s:s:0': 'language=ger'})
         #.run())
         # FFmpeg-Befehl zum Kombinieren von Video und Untertiteln
-        print(lang)
-        cmd = [
-    "ffmpeg",
-    "-i", video_file,
-    "-i", subtitle_file,
-    "-c:v", "copy",
-    "-c:a", "copy",
-    "-c:s", "mov_text",
-    "-map", "0:v:0",
-    "-map", "0:a:0",
-    "-map", "1:s:0",
-    "-metadata:s:s:0", "language=" + lang,
-    output_file
-]
+        cmd =   [
+                "ffmpeg",
+                "-i", video_file,
+                "-i", subtitle_file,
+                "-c:v", "copy",
+                "-c:a", "copy",
+                "-c:s", "mov_text",
+                "-map", "0:v:0",
+                "-map", "0:a:0",
+                "-map", "1:s:0",
+                "-metadata:s:s:0", "language=ger", output_file
+                ]
     # FFmpeg-Befehl ausführen
         with open(os.devnull, 'w') as devnull:
             subprocess.run(cmd, stdout=devnull, stderr=subprocess.STDOUT)
@@ -140,14 +136,3 @@ class FileManager:
         video_duration = clip.duration
         clip.close()
         return video_duration
-
-    def create_zip(folder_path):
-    # Erstellen einer ZIP-Datei aus dem Ordner
-        zip_file_path = f"{folder_path}.zip"
-        with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for root, dirs, files in os.walk(folder_path):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    arcname = os.path.relpath(file_path, folder_path)
-                    zipf.write(file_path, arcname)
-        return zip_file_path
