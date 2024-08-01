@@ -12,11 +12,6 @@
     margin: 0;
     padding: 0;
 }
-    footer {
-        position: absolute;
-        background-color: #4caf50;
-        width: 100%;
-    }
 </style>
     <script>
         function get_height() {
@@ -36,13 +31,8 @@
         window.onresize = setFooterPosition; // Adjust footer position if window is resized
     </script>
 <body>
-<footer id="myFooter">
-    <p>halle</p>
-</footer>
-<ul>
-    <li><a href= "/"> Home </a></li>
-    <li><a href= "/upload/"> Upload </a></li>
-</ul>
+{{foot | safe}}
+{{header | safe}}
     <title>MP4 Datei hochladen</title>
     <style>
         #progressBar {
@@ -62,13 +52,32 @@
     </style>
 </head>
 <body>
+    <div class="zentriert">
     <h1>MP4 Datei hochladen</h1>
-    <form id="uploadForm" action="/login-check" method="post">
-        <input name="username" type="text" ><br>
-        <input name="password" type="text" ><br>
-        <input type="submit" value="Hochladen">
+    
+<br>
+    <form class="form" action="/login-check" method="post">
+        <p class="form-title">Sign in to your account</p>
+         <div class="input-container">
+           <input name="username" type="text"  placeholder="username">
+           <span>
+           </span>
+       </div>
+       <div class="input-container">
+           <input name="password" type="password" placeholder="Enter password">
+         </div>
+          <button type="submit" class="submit">
+         Sign in
+       </button>
+ 
+       <p class="signup-link">
+         No account?
+         <a href="">Sign up</a>
+       </p>
     </form>
+ </div>
     <div>
+    
     <p>{{message | safe}}</p>
 </div>
 </body>

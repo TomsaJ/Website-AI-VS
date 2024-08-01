@@ -1,9 +1,15 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial ;
+}
+
 ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: darkolivegreen;
+    background-color: #3366cc;
 }
 
 nav{
@@ -11,7 +17,7 @@ nav{
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: darkolivegreen;
+    background-color: #3366cc;
 }
 
 li {
@@ -47,14 +53,227 @@ body{
 }
 footer {
         position: fixed;
-        background-color: darkolivegreen;
+        background-color: #3366cc;
         width: 100%;
     }
 
-    .zentriert {
+.zentriert {
         width: 100%; /* Die Breite des Elements wird auf 100% des Viewports gesetzt */
         max-width: 1000px; /* Das Element wird nicht breiter als 650 Pixel */
         margin: 0 auto;
         text-align: center;
         padding: 20px;
     }
+
+
+/*login*/
+
+.form {
+    background-color: #fff;
+    display: block;
+    padding: 1rem;
+    max-width: 350px;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .form-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: #000;
+  }
+
+  .input-container {
+    position: relative;
+  }
+
+  .input-container input, .form button {
+    outline: none;
+    border: 1px solid #e5e7eb;
+    margin: 8px 0;
+  }
+
+  .input-container input {
+    background-color: #fff;
+    padding: 1rem;
+    padding-right: 3rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    width: 300px;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .submit {
+    display: block;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    background-color: #4F46E5;
+    color: #ffffff;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    width: 100%;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+  }
+
+  .signup-link {
+    color: #6B7280;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    text-align: center;
+  }
+
+  .signup-link a {
+    text-decoration: underline;
+  }
+}
+
+
+.eye {
+    width: 20px;
+    height: 8px;
+    background-color: rgba(240,220,220,1);
+    border-radius: 0px 0px 20px 20px;
+    position: relative;
+    left: 10px;
+    top: 40px;
+    box-shadow: 40px 0px 0px 0px rgba(240,220,220,1);
+  }
+
+  .head {
+    backface-visibility: hidden;
+    position: relative;
+    margin: -250px auto;
+    width: 80px;
+    height: 80px;
+    background-color: #111;
+    border-radius: 50px;
+    box-shadow: inset -4px 2px 0px 0px rgba(240,220,220,1);
+    animation: headAnim 1.5s infinite alternate;
+    animation-timing-function: ease-out;
+  }
+
+  .body {
+    position: relative;
+    margin: 90px auto;
+    width: 140px;
+    height: 120px;
+    background-color: #111;
+    border-radius: 50px/25px;
+    box-shadow: inset -5px 2px 0px 0px rgba(240,220,220,1);
+    animation: bodyAnim 1.5s infinite alternate;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes headAnim {
+    0% {
+      top: 0px;
+    }
+
+    50% {
+      top: 10px;
+    }
+
+    100% {
+      top: 0px;
+    }
+  }
+
+  @keyframes bodyAnim {
+    0% {
+      top: -5px;
+    }
+
+    50% {
+      top: 10px;
+    }
+
+    100% {
+      top: -5px;
+    }
+  }
+
+  .circ {
+    backface-visibility: hidden;
+    margin: 60px auto;
+    width: 180px;
+    height: 180px;
+    border-radius: 0px 0px 50px 50px;
+    position: relative;
+    z-index: -1;
+    left: 0%;
+    top: 20%;
+    overflow: hidden;
+  }
+
+  .hands {
+    margin-top: 140px;
+    width: 120px;
+    height: 120px;
+    position: absolute;
+    background-color: #111;
+    border-radius: 20px;
+    box-shadow: -1px -4px 0px 0px rgba(240,220,220,1);
+    transform: rotate(45deg);
+    top: 75%;
+    left: 16%;
+    z-index: 1;
+    animation: bodyAnim 1.5s infinite alternate;
+    animation-timing-function: ease-out;
+  }
+
+  .load {
+    position: absolute;
+    width: 7ch;
+    height: 32px;
+    text-align: left;
+    line-height: 32px;
+    margin: -10px auto;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: rgb(155, 152, 152);
+    left: 2%;
+    top: 5%;
+    animation: fontAnim 3.75s infinite;
+    animation-timing-function: ease-out;
+    word-wrap: break-word;
+    display: block;
+    overflow: hidden;
+  }
+
+  @keyframes fontAnim {
+    0% {
+      width: 7ch;
+    }
+
+    16% {
+      width: 8ch;
+    }
+
+    32% {
+      width: 9ch;
+    }
+
+    48% {
+      width: 10ch;
+    }
+
+    64% {
+      width: 11ch;
+    }
+
+    80% {
+      width: 12ch;
+    }
+
+    100% {
+      width: 13ch;
+    }
+  }

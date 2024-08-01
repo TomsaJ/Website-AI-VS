@@ -4,6 +4,7 @@ import importlib.util
 import time
 import os
 
+
 # Herausfinden, auf welchem Betriebssystem die Anwendung läuft
 current_os = os.name
 
@@ -48,6 +49,13 @@ from fastapi.staticfiles import StaticFiles
 from concurrent.futures import ProcessPoolExecutor
 from fastapi.templating import Jinja2Templates
 from starlette.config import Config
+src_path = os.path.join(os.path.dirname(__file__), 'src')
+sys.path.append(src_path)
+from html_design import HTML
+from subtitle_gen import Subtitle_gen
+from file import FileManager
+from db import DB
+from design import ProgramDesign
 #import cupy as cp
 
 src_path = os.path.join(os.path.dirname(__file__), 'src')
@@ -73,7 +81,25 @@ templates = Jinja2Templates(directory="page")
 max_workers = max(1, os.cpu_count() - 1)
 executor = ProcessPoolExecutor(max_workers=max_workers)
 app.mount("/videos", StaticFiles(directory="videos"), name="videos")
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads") 
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+def timeout(request):
+    time_request = request.session.get('time')
+    thirty_m = 3 * 60
+    current_time = int(time.time())
+    tmp = current_time-time_request
+    print(tmp)
+    print (thirty_m)
+    if(tmp < thirty_m):
+        refresh(request)
+        return
+    else:
+        request.session.clear()
+        return
+
+def refresh(request):
+    request.session['time'] = int(time.time())
+    return
 
 @app.get("/", response_class=HTMLResponse)
 async def main_page(request: Request):
@@ -84,14 +110,19 @@ async def main_page(request: Request):
     current_time = time.time()
     time = int(current_time)
     JS.delete_Video(time)
+    logged_in = False
     username = request.session.get('user')
     if username:
         user =  username
+        logged_in = True
+        timeout(request)
     else:
-        user= "Noch niemand angemeldet"   
+        user= "Noch niemand angemeldet"
+    header = HTML.header(logged_in)
+    footer = HTML.foot()
     try:
         videos_html = "<p>"+ "Hallo" + "</p>"
-        return templates.TemplateResponse("index.html", {"request": request, "videos": videos_html, "user": user})
+        return templates.TemplateResponse("index.html", {"request": request, "videos": videos_html, "user": user, "foot":footer, "header": header})
         #return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
@@ -99,6 +130,12 @@ async def main_page(request: Request):
 
 @app.get("/upload/", response_class=HTMLResponse)
 async def upload_page(request: Request):
+    logged_in = False
+    username = request.session.get('user')
+    if username:
+        logged_in = True
+    header = HTML.header(logged_in)
+    footer = HTML.foot()
     try:
         src_path = os.path.join(os.path.dirname(__file__), 'src')
         sys.path.append(src_path)
@@ -120,6 +157,12 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
     import time
     print(lang)
     current_time = time.time()
+    logged_in = False
+    username = request.session.get('user')
+    if username:
+        logged_in = True
+    header = HTML.header(logged_in)
+    footer = HTML.foot()
     try:
         # Sicherstellen, dass das Upload-Verzeichnis existiert
         upload_dir = UPLOAD_DIRECTORY
@@ -155,7 +198,8 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         "duration": duration,
         "lang": lang,
         "user": user,
-        "time": timestamp
+        "time": timestamp,
+        "foot":footer, "header": header
     })#return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
@@ -237,8 +281,17 @@ async def status_page(request: Request):
     
 @app.get("/login", response_class=HTMLResponse)
 async def upload_page(request: Request):
+    src_path = os.path.join(os.path.dirname(__file__), 'src')
+    sys.path.append(src_path)
+    from html_design import HTML
+    logged_in = False
+    username = request.session.get('user')
+    if username:
+        logged_in = True
+    header = HTML.header(logged_in)
+    footer = HTML.foot()
     try:
-        return templates.TemplateResponse("login.html", {"request": request})
+        return templates.TemplateResponse("login.html", {"request": request,  "foot":footer, "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
@@ -248,10 +301,15 @@ async def login(request: Request, username: str =  Form(...), password: str = Fo
     if User.login(username, password):
         request.session['user'] = username
         return RedirectResponse(url="/jupyterhub/user/jutom001/vscode/proxy/8000/me/", status_code=303)
+        request.session['time'] = int(time.time())
+
+# Print the stored timestamp
+        print(request.session['time'])
+        return RedirectResponse(url="/me", status_code=303)
     else:
         return("Fehler")
 
-@app.post("/logout")
+@app.get("/logout")
 async def logout(request: Request):
     request.session.clear()
     return RedirectResponse(url="/jupyterhub/user/jutom001/vscode/proxy/8000/", status_code=303)
@@ -266,9 +324,21 @@ async def upload_page(request: Request):
     video = JS.videos(username)
     style = HTML.sty()
     header = HTML.header()
+    username = request.session.get('user')
+    logged_in = False
+    if username:
+        user = "Willkomen, "
+        user +=  username
+        logged_in = True
+    else:
+        user = '''<h2>Melde dich bitte an!</h2><br>
+<button onclick="window.location.href='/login'">Anmelden</button>'''
+    header = HTML.header(logged_in)
     footer = HTML.foot()
     try:
-        return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": username, "video": video, "style": style , "header": header})
+        if logged_in:
+            return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": user, "video": video, "header": header})
+        else: return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": user, "video": "",  "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
@@ -283,4 +353,4 @@ if __name__ == "__main__":
     from html_design import HTML
     from user import User
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=30000)
