@@ -48,6 +48,10 @@ from fastapi.staticfiles import StaticFiles
 from concurrent.futures import ProcessPoolExecutor
 from fastapi.templating import Jinja2Templates
 from starlette.config import Config
+
+src_path = os.path.join(os.path.dirname(__file__), 'src')
+sys.path.append(src_path)
+from html_design import HTML
 #import cupy as cp
 
 # Configure session secret

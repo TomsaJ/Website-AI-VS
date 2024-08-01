@@ -10,7 +10,7 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
     ports:
-      - "3307:3306"
+      - "3306:3306"
 
   app:
     image: whisper_subtitle
