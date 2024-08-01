@@ -3,62 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/page/css/style.css">
-
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/css/style.css') }}">
     <title>Datei hochladen</title>
 </head>
 <style>
-    ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: darkolivegreen;
-}
-
-nav{
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: darkolivegreen;
-}
-
-li {
-    float: left;
-}
-
-li a {
-    display: block;
-    color: white;
-    text-align: center ;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-li a:hover:not(.active) {
-    background-color: white;
-    color: #212121;
-}
-
-.active {
-    background-color: #212121;
-}
-
-.active:hover{
-    background-color: white;
-    color: #212121;
-}
-body{
+    body{
     /*background-color: #212121;*/
     margin: 0;
     padding: 0;
 }
+    #progressBar {
+            width: 100%;
+            background-color: #f3f3f3;
+            margin-top: 10px;
+        }
+
+        #progressBarFill {
+            width: 0%;
+            height: 30px;
+            background-color: #4caf50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+        }
     footer {
         position: absolute;
         background-color: #4caf50;
         width: 100%;
     }
+
+    .card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.form {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.group {
+  position: relative;
+}
+
+.form .group label {
+  font-size: 14px;
+  color: rgb(99, 102, 102);
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  background-color: #fff;
+  transition: all .3s ease;
+}
+
+.form .group input,
+.form .group textarea {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+  outline: 0;
+  width: 100%;
+  background-color: transparent;
+}
+
+.form .group input:placeholder-shown+ label, .form .group textarea:placeholder-shown +label {
+  top: 10px;
+  background-color: transparent;
+}
+
+.form .group input:focus,
+.form .group textarea:focus {
+  border-color: #3366cc;
+}
+
+.form .group input:focus+ label, .form .group textarea:focus +label {
+  top: -10px;
+  left: 10px;
+  background-color: #fff;
+  color: #3366cc;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.form .group textarea {
+  resize: none;
+  height: 100px;
+}
+
+.form button {
+  background-color: #3366cc;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.form button:hover {
+  background-color: #27408b;
+}
+
+
+
 </style>
     <script>
         function get_height() {
@@ -78,39 +138,31 @@ body{
         window.onresize = setFooterPosition; // Adjust footer position if window is resized
     </script>
 <body>
-<footer id="myFooter">
-    <p>halle</p>
-</footer>
-<ul>
-    <li><a href= "/"> Home </a></li>
-    <li><a href= "/upload/"> Upload </a></li>
-</ul>
+    {{foot | safe}}
+    {{header | safe}}
     <title>MP4 Datei hochladen</title>
-    <style>
-        #progressBar {
-            width: 100%;
-            background-color: #f3f3f3;
-            margin-top: 10px;
-        }
-
-        #progressBarFill {
-            width: 0%;
-            height: 30px;
-            background-color: #4caf50;
-            text-align: center;
-            line-height: 30px;
-            color: white;
-        }
-    </style>
 </head>
 <body>
-    <h1>MP4 Datei hochladen</h1>
-    <form id="uploadForm" action="/upload_duration/" method="post" enctype="multipart/form-data">
-    <input name="file" type="file" accept=".mp4"> <br>
-    <label>Tags</label>
-    <input name="tags" type="text"> <br>
-    <input type="submit" value="Hochladen">
-</form>
-    </form>
+    <div class="zentriert" style="margin-left: 35%;">
+    <div class="card">
+        <span class="title">Video hochladen</span>
+        <form class="form">
+          <div class="group">
+          <input  name="file" type="file" accept=".mp4" required="">
+          <label for="name">Datei</label>
+          </div>
+      <div class="group">
+        <select id="lang" name="lang" required>
+            <option value="" disabled selected>Bitte auswählen ...</option>
+            {{ lang | safe }}
+        </select>
+          <label for="lang">Sprache</label>
+          </div>
+          <input type="hidden" name="user" value="{{ user }}">
+          <br>
+          <button type="submit">Hochladen</button>
+        </form>
+      </div>
+    </div>
 </body>
 </html>
