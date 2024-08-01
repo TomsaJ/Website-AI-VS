@@ -27,7 +27,10 @@ class DB:
             print(f"Fehler bei der Datenbankverbindung: {e}")
             return None
 
+    @staticmethod
     def insert_video(path, user, folder, time):
+
+
         connection = DB.db_conn()
         if connection is None:
             return "Connection to the database failed."
@@ -36,6 +39,7 @@ class DB:
                 # Convert tags list to JSON string
                 #                     tags_json = json.dumps(tags)
                 cursor.execute("INSERT INTO videos (pfad, user, folder, time) VALUES (%s, %s, %s, %s)", (path, user, folder, time))
+
                 connection.commit()
                 print("Zeile erfolgreich hinzugefügt")
         except Error as e:
@@ -194,5 +198,3 @@ class DB:
         finally:
             if connection.is_connected():
                 connection.close()
-# Example usage
-# DB.insert_video("/path/to/video.mp4", ["tag1", "tag2", "tag3"])

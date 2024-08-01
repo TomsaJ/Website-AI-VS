@@ -1,17 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/css/style.css') }}">
-    <title>Datei hochladen</title>
+    <title>Upload abgeschlossen</title>
     <style>
-body{
-    /*background-color: #212121;*/
-    margin: 0;
-    padding: 0;
-}
-
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: darkolivegreen;
+        }
+        nav{
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: darkolivegreen;
+        }
+        li {
+            float: left;
+        }
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        li a:hover:not(.active) {
+            background-color: white;
+            color: #212121;
+        }
+        .active {
+            background-color: #212121;
+        }
+        .active:hover{
+            background-color: white;
+            color: #212121;
+        }
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        footer {
+                position: absolute;
+                background-color: #4caf50;
+                width: 100%;
+            }
     </style>
 </head>
 <script>
@@ -32,8 +67,13 @@ body{
     window.onresize = setFooterPosition; // Adjust footer position if window is resized
 </script>
 <body>
-    {{foot | safe}}
-    {{header | safe}}
+<footer id="myFooter">
+    <p>halle</p>
+</footer>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/upload/">Upload</a></li>
+    </ul>
     <h1>Upload abgeschlossen</h1>
     <p>Datei: {{ file_name }}</p>
     <p>Speicherort: {{file_location}}</p>
@@ -44,56 +84,13 @@ body{
         <input type="hidden" name="file_location" value="{{ file_location }}">
         <input type="hidden" name="video_duration" value="{{ video_duration }}">
         <input type="hidden" name="duration" value="{{ duration }}">
-        <input type="hidden" name="lang" value="{{ lang }}">
-        <input type="hidden" name="user" value="{{ user }}">
-        <input type="hidden" name="time" value="{{time}}">
+        <input type="hidden" name="tags" value="{{ tags }}">
     </form>
     <button id="submitButton">Bestätigen und fortfahren</button>
-<footer id="myFooter">
-    <p>halle</p>
-</footer>
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/upload/">Upload</a></li>
-    </ul>
-    <div class="zentriert" style="margin-left: 35%;">
-    <div class="card">
-        <span class="title">Upload abgeschlossens</span>
-        <form class="form">
-          <div class="group">
-          <input name="file" value="{{ file_name }}" type="text" required="" disabled>
-          <label for="name">Datei</label>
-          </div>
-            <div class="group">
-                <input name="video_duration" value="{{ video_duration }} s" type="text" required="" disabled>
-                <label for="name">Videolänge</label>
-                </div>
-                <div class="group">
-                    <input name="duration" value="{{ duration }} s" type="text" required="" disabled>
-                    <label for="name">Generierungsdauer</label>
-                    </div>
-                    <input type="hidden" name="lang" value="{{ lang }}">
-                    <input type="hidden" name="user" value="{{ user }}">
-                    <input type="hidden" name="time" value="{{time}}">
-                    <button id="submitButton">Bestätigen und fortfahren</button>
-        </form>
-      </div>
-    <div id="loadingAnimation" class="circ" style="display:none;">
-        <div class="load">Loading . . . </div>
-        <div class="hands"></div>
-        <div class="body"></div>
-        <div class="head">
-            <div class="eye"></div>
-        </div>
-    </div>
-    </div>
     <script>
         document.getElementById('submitButton').addEventListener('click', function() {
-            document.getElementById('loadingAnimation').style.display = 'block';
             document.getElementById('hiddenForm').submit();
         });
     </script>
-
-
 </body>
 </html>
