@@ -4,6 +4,7 @@ import importlib.util
 import time
 import os
 
+
 # Herausfinden, auf welchem Betriebssystem die Anwendung läuft
 current_os = os.name
 
@@ -48,6 +49,13 @@ from fastapi.staticfiles import StaticFiles
 from concurrent.futures import ProcessPoolExecutor
 from fastapi.templating import Jinja2Templates
 from starlette.config import Config
+src_path = os.path.join(os.path.dirname(__file__), 'src')
+sys.path.append(src_path)
+from html_design import HTML
+from subtitle_gen import Subtitle_gen
+from file import FileManager
+from db import DB
+from design import ProgramDesign
 #import cupy as cp
 
 # Configure session secret
