@@ -140,9 +140,10 @@ async def main_page(request: Request):
         user= "Noch niemand angemeldet"  
     header = HTML.header(logged_in)
     footer = HTML.foot(username)
+    script = HTML.foot_script()
     try:
         videos_html = "<p>"+ "Hallo" + "</p>"
-        return templates.TemplateResponse("about.html", {"request": request, "videos": videos_html, "user": user, "foot":footer, "header": header})
+        return templates.TemplateResponse("about.html", {"request": request, "script": script, "user": user, "foot":footer, "header": header})
         #return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)

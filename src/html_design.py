@@ -1,16 +1,39 @@
 class HTML:
+
+    def foot_script():
+        content = ''' </style>
+    <script>
+        function get_height() {
+            return window.innerHeight;
+        }
+
+        function foot() {
+            return get_height() - 46;
+        }
+
+        function setFooterPosition() {
+            var footer = document.getElementById('myFooter');
+            footer.style.marginTop = foot() + 'px';
+        }
+
+        window.onload = setFooterPosition;
+        window.onresize = setFooterPosition; // Adjust footer position if window is resized
+    </script> '''
+        return content
     def header(logged_in):
         content = '''<ul>
         <li><a href="/">Home</a></li>
         <li><a href="/upload/">Upload</a></li>
         <li><a href="/me">My Videos</a></li>
+        
     '''
         if logged_in:
             content += '''<li style="float: right"><a href="/logout">Logout</a></li>'''
         else:
             content += '''<li style="float: right"><a href="/login">Login</a></li>'''
     
-        content += '''</ul>'''
+        content += '''<li style="float: right"><a href="/about">About</a></li>
+        </ul>'''
         return content
     
     def foot(user):
