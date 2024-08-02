@@ -113,10 +113,37 @@ async def main_page(request: Request):
     else:
         user= "Noch niemand angemeldet"  
     header = HTML.header(logged_in)
-    footer = HTML.foot()
+    footer = HTML.foot(username)
     try:
         videos_html = "<p>"+ "Hallo" + "</p>"
         return templates.TemplateResponse("index.html", {"request": request, "videos": videos_html, "user": user, "foot":footer, "header": header})
+        #return HTMLResponse(content=content, status_code=200)
+    except FileNotFoundError:
+        return HTMLResponse(content="File not found", status_code=404)
+
+@app.get("/about", response_class=HTMLResponse)
+async def main_page(request: Request):
+    src_path = os.path.join(os.path.dirname(__file__), 'src')
+    sys.path.append(src_path)
+    from db import DB
+    import time
+    current_time = time.time()
+    time = int(current_time)
+    DB.delete_Video(time)
+    logged_in = False
+    username = request.session.get('user')
+    if username:
+        user =  username
+        logged_in = True
+        timeout(request)
+    else:
+        user= "Noch niemand angemeldet"  
+    header = HTML.header(logged_in)
+    footer = HTML.foot(username)
+    script = HTML.foot_script()
+    try:
+        videos_html = "<p>"+ "Hallo" + "</p>"
+        return templates.TemplateResponse("about.html", {"request": request, "script": script, "user": user, "foot":footer, "header": header})
         #return HTMLResponse(content=content, status_code=200)
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
@@ -129,7 +156,7 @@ async def upload_page(request: Request):
     if username:
         logged_in = True
     header = HTML.header(logged_in)
-    footer = HTML.foot()
+    footer = HTML.foot(username)
     try:
         src_path = os.path.join(os.path.dirname(__file__), 'src')
         sys.path.append(src_path)
@@ -157,7 +184,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
     if username:
         logged_in = True
     header = HTML.header(logged_in)
-    footer = HTML.foot()
+    footer = HTML.foot(username)
     try:
         # Sicherstellen, dass das Upload-Verzeichnis existiert
         upload_dir = UPLOAD_DIRECTORY
@@ -244,33 +271,6 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
         FileManager.delete_tmp_folder(folder)
         print("No")
     return RedirectResponse(url="/me", status_code=303)
-
-@app.get("/status", response_class=HTMLResponse)
-async def status_page(request: Request):
-    # Get the output_file from the session
-    output_file = request.session.get('output_file')
-
-    # Ensure output_file is available
-    if output_file:
-        file_location = output_file
-
-        # Simple HTML to display status
-        html_content = f"""
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Upload abgeschlossen</title>
-            </head>
-            <body>
-                <h1>Upload abgeschlossen</h1>
-                <a href="{file_location}">Klick hier, um die Datei herunterzuladen</a>
-            </body>
-            </html>
-            """
-        return HTMLResponse(content=html_content)
-    else:
-        # Handle the case where no output_file is available
-        return HTMLResponse(content="<h1>Keine Datei hochgeladen</h1>")
     
 @app.get("/login", response_class=HTMLResponse)
 async def upload_page(request: Request):
@@ -282,7 +282,7 @@ async def upload_page(request: Request):
     if username:
         logged_in = True
     header = HTML.header(logged_in)
-    footer = HTML.foot()
+    footer = HTML.foot(username)
     try:
         return templates.TemplateResponse("login.html", {"request": request,  "foot":footer, "header": header})
     except FileNotFoundError:
@@ -324,7 +324,7 @@ async def upload_page(request: Request):
         user = '''<h2>Melde dich bitte an!</h2><br>
 <button onclick="window.location.href='/login'">Anmelden</button>'''
     header = HTML.header(logged_in)
-    footer = HTML.foot()
+    footer = HTML.foot(username)
     try:
         if logged_in:
             return templates.TemplateResponse("me.html", {"request": request, "foot":footer, "user": user, "video": video, "header": header})
