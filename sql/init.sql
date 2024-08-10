@@ -31,7 +31,7 @@ CREATE TABLE `videos` (
   `path` varchar(255) NOT NULL,
   `user` varchar(80) NOT NULL,
   `folder` varchar(80) NOT NULL,
-  `time` varchar(10) NOT NULL
+  `time` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `videos`
