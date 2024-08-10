@@ -1,13 +1,25 @@
-import json
-import mysql.connector
-from mysql.connector import Error
-import pymysql 
-from file import FileManager
 import os
+import re  # Für die Eingabevalidierung
 import shutil
 
+import mysql.connector
+from mysql.connector import Error
 
-class DB:
+from .file import FileManager
+
+
+class Db:
+    @staticmethod
+    def sanitize_input(input_str):
+        if isinstance(input_str, str):
+            # Removes all unwanted characters from the input
+            sanitized_str = re.sub(r'[^\w\s\-]', '', input_str)  # Allows only alphanumeric characters, spaces and hyphens
+            return sanitized_str
+        else:
+            # If it is not a string, return the input unchanged
+            return input_str
+
+
     @staticmethod
     def db_conn():
         try:
@@ -27,14 +39,19 @@ class DB:
             return None
 
     def insert_video(path, user, folder, time):
-        connection = DB.db_conn()
+        connection = Db.db_conn()
         if connection is None:
             return "Connection to the database failed."
         try:
             with connection.cursor() as cursor:
-                # Convert tags list to JSON string
-                #                     tags_json = json.dumps(tags)
-                cursor.execute("INSERT INTO videos (pfad, user, folder, time) VALUES (%s, %s, %s, %s)", (path, user, folder, time))
+                sanitized_path = Db.sanitize_input(path)
+                sanitized_user = Db.sanitize_input(user)
+                sanitized_folder = Db.sanitize_input(folder)
+
+                cursor.execute(
+                    "INSERT INTO videos (path, user, folder, time) VALUES (%s, %s, %s, %s)",
+                    (sanitized_path, sanitized_user, sanitized_folder, time)
+                )
                 connection.commit()
                 print("Zeile erfolgreich hinzugefügt")
         except Error as e:
@@ -42,21 +59,21 @@ class DB:
         finally:
             connection.close()
 
-    def videos(user):
-        connection = DB.db_conn()
+    def get_videos(user):
+        connection = Db.db_conn()
         if user == "null":
             try:
                 with connection.cursor() as cursor:
-                    cursor.execute("SELECT pfad FROM videos")
+                    cursor.execute("SELECT path FROM videos")
                     myresult = cursor.fetchall()
-            # Generate HTML video elements for each path
+                    # Generate HTML video elements for each path
                     video_elements = ''.join([
-                    f'<video width="320" height="270" controls>'
-                f'<source src="{x[0]}" type="video/mp4">'
-                'Your browser does not support the video tag.'
-                '</video>'
-                for x in myresult
-                ])
+                        f'<video width="320" height="270" controls>'
+                        f'<source src="{x[0]}" type="video/mp4">'
+                        'Your browser does not support the video tag.'
+                        '</video>'
+                        for x in myresult
+                    ])
                 return video_elements
             except Error as e:
                 print(f"Fehler beim Abrufen der Daten: {e}")
@@ -66,29 +83,28 @@ class DB:
                     connection.close()
         else:
             try:
+                sanitized_user = Db.sanitize_input(user)
                 with connection.cursor() as cursor:
-                    sql_query = "SELECT pfad, folder FROM videos WHERE user = %s"
-                    cursor.execute(sql_query, (user,))
+                    sql_query = "SELECT path, folder FROM videos WHERE user = %s"
+                    cursor.execute(sql_query, (sanitized_user,))
                     myresult = cursor.fetchall()
 
                     if not myresult:
                         return "Noch keine Videos"
 
                     video_elements = ''.join([
-                f'<video width="320" height="270" controls>'
-                f'<source src="{x[0]}" type="video/mp4">'
-                'Your browser does not support the video tag.'
-                '</video> <br>'
-                f"""
-                    <button onclick="window.location.href='{x[0]}'" download>Originaldatei herunterladen</button>
-                    <button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}.srt'" download>Untertitel herunterladen (.srt)</button>
-                    <button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}_all.txt'" download>Textdatei herunterladen (.txt)</button>
-                """
-
-
-                for x in myresult
-                ])
-                return video_elements
+                        f'<video width="320" height="270" controls>'
+                        f'<source src="{x[0]}" type="video/mp4">'
+                        'Your browser does not support the video tag.'
+                        '</video> <br>'
+                        f"""
+                        <button onclick="window.location.href='{x[0]}'" download>Originaldatei herunterladen</button>
+                        <button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}.srt'" download>Untertitel herunterladen (.srt)</button>
+                        <button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}_all.txt'" download>Textdatei herunterladen (.txt)</button>
+                        """
+                        for x in myresult
+                    ])
+                    return video_elements
             except Error as e:
                 print(f"Fehler beim Abrufen der Daten: {e}")
                 return "<p>Empty</p>"
@@ -96,8 +112,8 @@ class DB:
                 if connection.is_connected():
                     connection.close()
 
-    def all_lang():
-        connection = DB.db_conn()
+    def get_all_lang():
+        connection = Db.db_conn()
         if connection is None:
             return ""
         try:
@@ -117,32 +133,37 @@ class DB:
                 connection.close()
 
     def get_language_code(lang):
-        connection = DB.db_conn()  # Annahme: db_conn() stellt die Verbindung zur Datenbank her
+        connection = Db.db_conn() 
         if connection is None:
-            return None  # Rückgabe None, um anzuzeigen, dass keine Verbindung hergestellt werden konnte
+            return None  # Return None to indicate that the connection could not be established
         try:
+            sanitized_lang = Db.sanitize_input(lang)
             with connection.cursor() as cursor:
                 sql_query = "SELECT language_code FROM language WHERE language_name = %s"
-                cursor.execute(sql_query, (lang,))
-                myresult = cursor.fetchone()  # Da wir nur einen Wert erwarten, verwenden wir fetchone()
+                cursor.execute(sql_query, (sanitized_lang,))
+                myresult = cursor.fetchone()  # Since we expect only one value, use fetchone()
                 if myresult:
-                    return myresult[0]  # Rückgabe des ersten Elements des Tupels (language_code)
+                    return myresult[0]  # Return the first element of the tuple (language_code)
                 else:
-                    return None  # Rückgabe None, wenn kein Ergebnis gefunden wurde
+                    return None  # Return None if no result is found
         except Error as e:
             print(f"Error fetching data: {e}")
-            return None  # Rückgabe None im Falle eines Fehlers
+            return None  # Return None in case of an error
         finally:
             if connection.is_connected():
-                connection.close()  # Schließen Sie die Verbindung zur Datenbank, wenn sie geöffnet ist
+                connection.close()  # Close the database connection if it is open
 
-    def registration(username, password):
-        connection = DB.db_conn()
+    def register_user(username, password):
+        connection = Db.db_conn()
         try:
+            sanitized_username = Db.sanitize_input(username)
+            sanitized_password = Db.sanitize_input(password)
+
             with connection.cursor() as cursor:
-                # Convert tags list to JSON string
-                #                     tags_json = json.dumps(tags)
-                cursor.execute("INSERT INTO user (user, password) VALUES (%s, %s)", (username, password))
+                cursor.execute(
+                    "INSERT INTO user (username, password) VALUES (%s, %s)",
+                    (sanitized_username, sanitized_password)
+                )
                 connection.commit()
                 return True
         except Error as e:
@@ -150,26 +171,28 @@ class DB:
         finally:
             connection.close()
 
-    def login(username, password):
-        connection = DB.db_conn()
+    def login_user(username, password):
+        connection = Db.db_conn()
         if connection is None:
-            return None  # Rückgabe None, um anzuzeigen, dass keine Verbindung hergestellt werden konnte
+            return None  # Return None to indicate that the connection could not be established
         try:
+            sanitized_username = Db.sanitize_input(username)
+
             cursor = connection.cursor()
             sql_query = "SELECT password FROM user WHERE username = %s"
-            cursor.execute(sql_query, (username,))
+            cursor.execute(sql_query, (sanitized_username,))
             myresult = cursor.fetchone()
             return myresult
         except Error as e:
             print(f"Error fetching data: {e}")
-            return None  # Rückgabe None im Falle eines Fehlers
+            return None  # Return None in case of an error
         finally:
             cursor.close()
             if connection.is_connected():
-                connection.close()  # Schließen Sie die Verbindung zur Datenbank, wenn sie geöffnet ist
+                connection.close()  # Close the database connection if it is open
 
-    def delete_Video(time):
-        connection = DB.db_conn()
+    def delete_video(time):
+        connection = Db.db_conn()
         thirty_days_in_milliseconds = 30 * 24 * 60 * 60 * 1000
         try:
             cursor = connection.cursor()
@@ -186,12 +209,10 @@ class DB:
                     connection.commit()
                     if os.path.isdir(folder_path):
                         shutil.rmtree(folder_path)
-                        print ("gelöscht")
+                        print("gelöscht")
         except Error as e:
             print(f"Fehler beim Abrufen der Daten: {e}")
             return "<p>Empty</p>"
         finally:
             if connection.is_connected():
                 connection.close()
-# Example usage
-# DB.insert_video("/path/to/video.mp4", ["tag1", "tag2", "tag3"])

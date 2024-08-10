@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y \
     gcc \
     libmariadb-dev
 
+# install git
+RUN apt-get update && apt-get install -y git ffmpeg
+
 # Set the working directory in the container
 WORKDIR /app
 
