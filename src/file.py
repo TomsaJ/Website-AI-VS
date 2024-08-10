@@ -3,7 +3,6 @@ import shutil
 import subprocess
 import zipfile
 import ffmpeg
-from vtt_to_srt.vtt_to_srt import ConvertFile
 
 from moviepy.editor import VideoFileClip
 

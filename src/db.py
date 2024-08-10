@@ -13,7 +13,7 @@ class Db:
     def sanitize_input(input_str):
         if isinstance(input_str, str):
             # Removes all unwanted characters from the input
-            sanitized_str = re.sub(r'[^\w\s\-]', '', input_str)  # Allows only alphanumeric characters, spaces and hyphens
+            sanitized_str = re.sub(r'[^\w\s\-\\\/\.]', '', input_str)
             return sanitized_str
         else:
             # If it is not a string, return the input unchanged
