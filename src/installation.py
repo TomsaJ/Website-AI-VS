@@ -1,5 +1,4 @@
 import sys
-import os
 src_path = "/src"
 sys.path.append(src_path)
 from file import FileManager as file
@@ -23,4 +22,3 @@ class Installation:
         file.delete_tmp_file("src/time.csv")
 if __name__ == "__main__":
     Installation.startup()
-        #0.1220757381170537

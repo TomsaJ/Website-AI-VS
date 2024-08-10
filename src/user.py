@@ -1,13 +1,15 @@
+from db import Db
+
 srcpath = os.path.join(os.path.dirname(_file), 'src')
 sys.path.append(src_path)
-from db import DB
+
 class User:
-    def registration(username, password):
+    def register_user(username, password):
         password = hashlib.sha256(password.encode()).hexdigest()
-        info = DB.registration(username, password)
+        info = Db.register_user(username, password)
         return info
-    def login(username, password):
-        myresult = DB.login(username, password)
+    def authenticate_user(username, password):
+        myresult = Db.login_user(username, password)
         password = hashlib.sha256(password.encode()).hexdigest()
         if myresult:
             stored_password = myresult[0]
@@ -16,4 +18,4 @@ class User:
             else:
                 return False
         else:
-            return None  # Rückgabe None, wenn kein Ergebnis gefunden wurde
+            return None  # return None, wenn kein Ergebnis gefunden wurde

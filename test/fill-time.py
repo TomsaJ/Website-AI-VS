@@ -13,7 +13,7 @@ sys.path.append(src_path)
 
 async def main():
     tmp = FileManager()
-    gen = Subtitle_gen()
+    gen = SubtitleGen()
     paths = ['10min.mp4','15min.mp4', '20min.mp4', '30min.mp4', '45min.mp4', '90min.mp4']
     print("Folgende videos laufen durch den Test")
     for file_path in paths:
@@ -52,6 +52,6 @@ if __name__ == "__main__":
     src_path = "/home/jutom001/KI/src"
     sys.path.append(src_path)
     from installwhisper import check_and_install_package
-    from subtitle_gen import Subtitle_gen
+    from subtitle_gen import SubtitleGen
     from file import FileManager
     asyncio.run(main())

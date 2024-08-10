@@ -141,7 +141,7 @@
     <div class="zentriert" style="margin-left: 35%;">
     <div class="card">
         <span class="title">Video hochladen</span>
-        <form class="form">
+        <form class="form" id="uploadForm" action="/upload_duration/" method="post" enctype="multipart/form-data">
           <div class="group">
           <input  name="file" type="file" accept=".mp4" required="">
           <label for="name">Datei</label>

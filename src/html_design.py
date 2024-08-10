@@ -1,4 +1,4 @@
-class HTML:
+class Html:
 
     def foot_script():
         content = ''' </style>

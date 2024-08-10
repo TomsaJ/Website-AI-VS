@@ -1,25 +1,17 @@
-import asyncio
-import whisper
 import datetime
-import torch
 import os
+import whisper
 
-class Subtitle_gen:
+class SubtitleGen:
     @staticmethod
-    def untertitel(file_path, filename, lang):
-        #if torch.cuda.is_available():
-        #    device = "cuda"
-        #elif torch.backends.mps.is_available():
-        #    device = "mps"
-        #else:
-        #    device = "cpu"
+    def create_subtitles(file_path, filename, lang):
         device = "cpu"
         model = whisper.load_model("medium", device=device)
         options = whisper.DecodingOptions()
         result = model.transcribe(file_path, language=lang)
         
-        # Speichern der SRT-Datei
-        save_target_srt = os.path.join(os.getcwd(), 'videos/' +filename + '/'  + filename + '_subtitle.srt')
+        # Save the SRT file
+        save_target_srt = os.path.join(os.getcwd(), 'videos/' + filename + '/' + filename + '_subtitle.srt')
         with open(save_target_srt, 'w') as file:
             for indx, segment in enumerate(result['segments'], start=1):
                 start_time = datetime.timedelta(seconds=segment['start'])
@@ -36,14 +28,14 @@ class Subtitle_gen:
                 file.write(start_time_str + ' --> ' + end_time_str + '\n')
                 file.write(segment['text'].strip() + '\n\n')
         
-        # Speichern der Textdatei
-        save_target_txt = os.path.join(os.getcwd(), 'videos/' + filename + '/'  +  filename + '_subtitle_all.txt')
+        # Save the text file
+        save_target_txt = os.path.join(os.getcwd(), 'videos/' + filename + '/' + filename + '_subtitle_all.txt')
         with open(save_target_txt, 'w') as file:
             file.write(result['text'])
         with open(save_target_txt, 'w') as file:
             for indx, segment in enumerate(result['segments'], start=1):
                 text = segment['text'].strip()
-                # Überprüfe, ob der Text ein Punkt enthält
+                # Check if the text contains a period
                 if '.' in text:
-                    text += '\n'  # Füge einen Zeilenumbruch hinzu
+                    text += '\n'  # Add a line break
                 file.write(text)

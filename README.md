@@ -32,7 +32,7 @@ Es wird die Datenbank <b>WS-AI-VS </b> benötigt. Diese Datenbank braucht einmal
 <br>
 <code> CREATE TABLE `videos` (
 `id` int(11) NOT NULL,
-`pfad` varchar(255) NOT NULL,
+`path` varchar(255) NOT NULL,
 `tags` varchar(255) NOT NULL)
 
 ALTER TABLE `videos`
