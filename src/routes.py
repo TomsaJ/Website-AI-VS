@@ -85,7 +85,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         if not os.path.exists(upload_dir):
             os.makedirs(upload_dir)
 
-        timestamp = str(int(current_time))
+        timestamp = int(current_time)
         original_filename = file.filename
         file_extension = os.path.splitext(original_filename)[1]
         new_filename = f"{os.path.splitext(original_filename)[0]}_{timestamp}{file_extension}"
@@ -115,7 +115,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         return HTMLResponse(content="File not found", status_code=404)
 
 @router.post("/uploadfile/")
-async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...), user: str = Form(...), time: str= Form(...)):
+async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...), user: int = Form(...), time: str= Form(...)):
     file_path = Path(file_location)
     file_name = file_path.name
     filename = FileManager.get_file_name(file_path)

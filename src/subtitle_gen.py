@@ -4,9 +4,9 @@ import whisper
 
 class SubtitleGen:
     @staticmethod
-    def create_subtitles(file_path, filename, lang):
+    def create_subtitles(file_path, filename, lang,model):
         device = "cpu"
-        model = whisper.load_model("medium", device=device)
+        model = whisper.load_model(model, device=device)
         options = whisper.DecodingOptions()
         result = model.transcribe(file_path, language=lang)
         

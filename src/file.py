@@ -1,7 +1,6 @@
 import os
 import shutil
 import subprocess
-import zipfile
 import ffmpeg
 
 from moviepy.editor import VideoFileClip
@@ -111,13 +110,3 @@ class FileManager:
         clip.close()
         return video_duration
 
-    def create_zip(folder_path):
-        # Create a ZIP file from the folder
-        zip_file_path = f"{folder_path}.zip"
-        with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for root, dirs, files in os.walk(folder_path):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    arcname = os.path.relpath(file_path, folder_path)
-                    zipf.write(file_path, arcname)
-        return zip_file_path

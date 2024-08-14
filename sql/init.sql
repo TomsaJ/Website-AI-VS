@@ -13,25 +13,13 @@ SET time_zone = "+00:00";
 
 USE `WS-AI-VS`;
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Datenbank: `WS-AI-VS`
---
-
--- --------------------------------------------------------
-
 -- VIDEOS
 CREATE TABLE `videos` (
   `id` varchar(255) NOT NULL,
   `path` varchar(255) NOT NULL,
   `user` varchar(80) NOT NULL,
   `folder` varchar(80) NOT NULL,
-  `time` varchar(10) NOT NULL
+  `time` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `videos`
@@ -46,6 +34,7 @@ COMMIT;
 CREATE TABLE `user` (
   `username` varchar(80) NOT NULL,
   `password` varchar(80) NOT NULL
+  `salt`  varchar(255);
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
