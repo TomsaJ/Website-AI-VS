@@ -1,10 +1,8 @@
 import os
 import re  # Für die Eingabevalidierung
 import shutil
-
 import mysql.connector
 from mysql.connector import Error
-
 from .file import FileManager
 
 
