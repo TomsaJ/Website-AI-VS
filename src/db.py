@@ -1,20 +1,20 @@
 import os
-import re  # Für die Eingabevalidierung
+import re
 import shutil
 import mysql.connector
 from mysql.connector import Error
-from .file import FileManager
+
+from file import FileManager
+
 
 
 class Db:
     @staticmethod
     def sanitize_input(input_str):
         if isinstance(input_str, str):
-            # Removes all unwanted characters from the input
             sanitized_str = re.sub(r'[^\w\s\-\\\/\.]', '', input_str)
             return sanitized_str
         else:
-            # If it is not a string, return the input unchanged
             return input_str
 
 
@@ -35,6 +35,26 @@ class Db:
         except Error as e:
             print(f"Fehler bei der Datenbankverbindung: {e}")
             return None
+    @staticmethod
+    def get_user_salt(username):
+        connection = Db.db_conn()
+        if connection is None:
+            return None
+        try:
+            sanitized_username = Db.sanitize_input(username)
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT salt FROM user WHERE username = %s", (sanitized_username,))
+                result = cursor.fetchone()
+                if result:
+                    return result[0]
+                else:
+                    return None
+        except Error as e:
+            print(f"Error fetching salt: {e}")
+            return None
+        finally:
+            if connection.is_connected():
+                connection.close()
 
     def insert_video(path, user, folder, time):
         connection = Db.db_conn()
@@ -151,43 +171,44 @@ class Db:
             if connection.is_connected():
                 connection.close()  # Close the database connection if it is open
 
-    def register_user(username, password):
+    @staticmethod
+    def register_user(username, hashed_password, salt):
         connection = Db.db_conn()
         try:
-            sanitized_username = Db.sanitize_input(username)
-            sanitized_password = Db.sanitize_input(password)
-
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "INSERT INTO user (username, password) VALUES (%s, %s)",
-                    (sanitized_username, sanitized_password)
+                    "INSERT INTO user (username, password, salt) VALUES (%s, %s, %s)",
+                    (username, hashed_password, salt)
                 )
                 connection.commit()
                 return True
         except Error as e:
+            print(f"Error registering user: {e}")
             return False
         finally:
-            connection.close()
+            if connection.is_connected():
+                connection.close()
 
-    def login_user(username, password):
+    @staticmethod
+    def login_user(username):
         connection = Db.db_conn()
         if connection is None:
-            return None  # Return None to indicate that the connection could not be established
+            return None
         try:
             sanitized_username = Db.sanitize_input(username)
-
-            cursor = connection.cursor()
-            sql_query = "SELECT password FROM user WHERE username = %s"
-            cursor.execute(sql_query, (sanitized_username,))
-            myresult = cursor.fetchone()
-            return myresult
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT password, salt FROM user WHERE username = %s", (sanitized_username,))
+                result = cursor.fetchone()
+                if result:
+                    return {'password': result[0], 'salt': result[1]}
+                else:
+                    return None
         except Error as e:
-            print(f"Error fetching data: {e}")
-            return None  # Return None in case of an error
+            print(f"Error fetching user data: {e}")
+            return None
         finally:
-            cursor.close()
             if connection.is_connected():
-                connection.close()  # Close the database connection if it is open
+                connection.close()
 
     def delete_video(time):
         connection = Db.db_conn()
@@ -214,3 +235,5 @@ class Db:
         finally:
             if connection.is_connected():
                 connection.close()
+
+
