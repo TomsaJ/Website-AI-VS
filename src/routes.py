@@ -12,6 +12,7 @@ from .subtitle_gen import SubtitleGen
 from .file import FileManager
 from .db import Db
 from .design import ProgramDesign
+from .user import User
 
 router = APIRouter()
 
@@ -152,15 +153,33 @@ async def login_page(request: Request):
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
+@router.get("/reg", response_class=HTMLResponse)
+async def reg_page(request: Request):
+    logged_in = False
+    username = request.session.get('user')
+    if username:
+        logged_in = True
+    header = Html.header(logged_in)
+    footer = Html.foot(username)
+    try:
+        return templates.TemplateResponse("reg.html", {"request": request,  "foot":footer, "header": header})
+    except FileNotFoundError:
+        return HTMLResponse(content="File not found", status_code=404)
+
 @router.post("/login-check")
 async def login_check(request: Request, username: str =  Form(...), password: str = Form(...)):
-    if Db.login_user(username, password):
+    if User.authenticate_user(username, password):
         request.session['user'] = username
         request.session['time'] = int(time.time())
         print(request.session['time'])
         return RedirectResponse(url="/me", status_code=303)
     else:
         raise HTTPException(status_code=401, detail="Ungültige Anmeldeinformationen")
+
+@router.post("/reg-check")
+async def reg_check(request: Request, username: str =  Form(...), password: str = Form(...)):
+    User.register_user(username, password)
+    return RedirectResponse(url="/login", status_code=303)
 
 @router.get("/logout")
 async def logout(request: Request):

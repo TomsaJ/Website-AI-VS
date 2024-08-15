@@ -16,3 +16,4 @@ mysql-connector-python
 pymysql
 python-multipart
 vtt_to_srt3
+bcrypt

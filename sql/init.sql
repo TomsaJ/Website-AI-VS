@@ -33,8 +33,7 @@ COMMIT;
 -- USER
 CREATE TABLE `user` (
   `username` varchar(80) NOT NULL,
-  `password` varchar(80) NOT NULL
-  `salt`  varchar(255);
+  `password` varchar(89) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
