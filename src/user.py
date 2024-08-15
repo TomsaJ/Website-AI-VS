@@ -11,10 +11,8 @@ class User:
     def register_user(username, password):
         # Generate a new salt
         salt = User.generate_salt()
-
         # Hash the password using the generated salt
         hashed_password = User.hash_password(password, salt)
-        
         # Combine the salt and hashed password for storage
         hashed_password_with_salt = salt.decode('utf-8') + hashed_password.decode('utf-8')
 
@@ -39,7 +37,7 @@ class User:
             
             # Compare the hashed input password with the stored password
             if login_hash_password_with_salt == stored_hashed_password_with_salt:
-                return result[1]
+                return result[1] # Username
             else:
                 return False
         else:
@@ -54,5 +52,5 @@ class User:
     @staticmethod
     def hash_password(password, salt):
     # Hash the password with the provided salt using bcrypt
-        salted_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-        return salted_password
+        salted_hash_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        return salted_hash_password
