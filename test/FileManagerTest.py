@@ -7,7 +7,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
 from file import FileManager
- # Assuming the FileManager class is in a file named file_manager.py
+# Assuming the FileManager class is in a file named file_manager.py
 
 class TestFileManager(unittest.TestCase):
 
@@ -18,15 +18,9 @@ class TestFileManager(unittest.TestCase):
         # Setup mocks
         mock_basename.return_value = 'test_file.txt'
         mock_copy.return_value = None
-        
-        # Test data
         file_path = '/path/to/test_file.txt'
         filename = 'test_video'
-
-        # Call the method
         result = FileManager.copy_to_tmp_directory(file_path, filename)
-
-        # Assertions
         mock_makedirs.assert_called_once_with('videos/test_video', exist_ok=True)
         mock_basename.assert_called_once_with(file_path)
         mock_copy.assert_called_once_with(file_path, 'videos/test_video/test_file.txt')
@@ -35,57 +29,48 @@ class TestFileManager(unittest.TestCase):
     @patch('shutil.move')
     @patch('os.path.dirname')
     def test_move_tmp_directory_back(self, mock_dirname, mock_move):
-        # Setup mocks
         mock_dirname.return_value = '/destination/path'
 
-        # Test data
         destination_path = '/destination/path/videos/test_video/test_file.txt'
         folder_name = 'test_video'
 
-        # Call the method
         result = FileManager.move_tmp_directory_back(destination_path, folder_name)
 
-        # Assertions
         mock_dirname.assert_called_once_with(destination_path)
         mock_move.assert_called_once_with(folder_name, '/destination/path/test_video')
         self.assertEqual(result, '/destination/path')
 
     @patch('shutil.rmtree')
     def test_delete_tmp_folder(self, mock_rmtree):
-        # Test data
+
         folder_path = '/path/to/tmp_folder'
 
-        # Call the method
         FileManager.delete_tmp_folder(folder_path)
 
-        # Assertions
         mock_rmtree.assert_called_once_with(folder_path)
 
     @patch('os.remove')
     def test_delete_tmp_file(self, mock_remove):
-        # Test data
+
         file_path = '/path/to/tmp_folder/file.txt'
 
-        # Call the method
+
         FileManager.delete_tmp_file(file_path)
 
-        # Assertions
         mock_remove.assert_called_once_with(file_path)
 
     def test_get_file_name(self):
-        # Test data
+
         file_path = '/path/to/video.mp4'
 
-        # Call the method
         result = FileManager.get_file_name(file_path)
 
-        # Assertions
         self.assertEqual(result, 'video')
 
     @patch('subprocess.run')
     @patch('os.path.exists')
     def test_combine_video_with_subtitle(self, mock_exists, mock_run):
-        # Setup mocks
+
         mock_exists.side_effect = [True, True]
         mock_run.return_value = None
 
@@ -95,10 +80,8 @@ class TestFileManager(unittest.TestCase):
         output_file = 'output.mp4'
         lang = 'en'
 
-        # Call the method
         FileManager.combine_video_with_subtitle(video_file, subtitle_file, output_file, lang)
 
-        # Assertions
         mock_exists.assert_any_call(video_file)
         mock_exists.assert_any_call(subtitle_file)
         mock_run.assert_called_once_with(
@@ -114,18 +97,14 @@ class TestFileManager(unittest.TestCase):
 
     @patch('moviepy.editor.VideoFileClip')
     def test_duration_video(self, mock_video_clip):
-        # Setup mocks
         mock_clip_instance = MagicMock()
         mock_clip_instance.duration = 10.5
         mock_video_clip.return_value = mock_clip_instance
 
-        # Test data
         video_file = 'video.mp4'
 
-        # Call the method
         result = FileManager.duration_video(video_file)
 
-        # Assertions
         mock_video_clip.assert_called_once_with(video_file)
         mock_clip_instance.close.assert_called_once()
         self.assertEqual(result, 10.5)
