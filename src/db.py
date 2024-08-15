@@ -4,7 +4,7 @@ import shutil
 import mysql.connector
 from mysql.connector import Error
 
-from file import FileManager
+from .file import FileManager
 
 
 
@@ -172,13 +172,13 @@ class Db:
                 connection.close()  # Close the database connection if it is open
 
     @staticmethod
-    def register_user(username, hashed_password, salt):
+    def register_user(username, hashed_password):
         connection = Db.db_conn()
         try:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "INSERT INTO user (username, password, salt) VALUES (%s, %s, %s)",
-                    (username, hashed_password, salt)
+                    "INSERT INTO user (username, password) VALUES (%s, %s)",
+                    (username, hashed_password)
                 )
                 connection.commit()
                 return True
@@ -197,10 +197,10 @@ class Db:
         try:
             sanitized_username = Db.sanitize_input(username)
             with connection.cursor() as cursor:
-                cursor.execute("SELECT password, salt FROM user WHERE username = %s", (sanitized_username,))
+                cursor.execute("SELECT password, username FROM user WHERE username = %s", (sanitized_username,))
                 result = cursor.fetchone()
                 if result:
-                    return {'password': result[0], 'salt': result[1]}
+                    return result
                 else:
                     return None
         except Error as e:
