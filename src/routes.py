@@ -145,29 +145,37 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
         print("No")
     return RedirectResponse(url="/me", status_code=303)
 
-@router.get("/login", response_class=HTMLResponse)
-async def login_page(request: Request):
+@router.get("/login/{message}", response_class=HTMLResponse)
+async def login_page(request: Request, message: str = ""):
     logged_in = False
     username = request.session.get('user')
     if username:
         logged_in = True
     header = Html.header(logged_in)
     footer = Html.foot(username)
+    if(message == "error"):
+        message = "Email oder Passwort falsch"
+    else: 
+        message = ""
     try:
-        return templates.TemplateResponse("login.html", {"request": request,  "foot":footer, "header": header})
+        return templates.TemplateResponse("login.html", {"request": request, "message": message, "foot":footer, "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
-@router.get("/reg", response_class=HTMLResponse)
-async def reg_page(request: Request):
+@router.get("/reg/{message}", response_class=HTMLResponse)
+async def reg_page(request: Request, message: str = ""):
     logged_in = False
     username = request.session.get('user')
     if username:
         logged_in = True
     header = Html.header(logged_in)
     footer = Html.foot(username)
+    if(message == "vorhanden"):
+        message = "Email schon vorhanden"
+    else:
+        message = ""
     try:
-        return templates.TemplateResponse("reg.html", {"request": request,  "foot":footer, "header": header})
+        return templates.TemplateResponse("reg.html", {"message": message, "request": request,  "foot":footer, "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
@@ -179,12 +187,15 @@ async def login_check(request: Request, username: str =  Form(...), password: st
         print(request.session['time'])
         return RedirectResponse(url="/me", status_code=303)
     else:
-        raise HTTPException(status_code=401, detail="Ungültige Anmeldeinformationen")
+        return RedirectResponse(url="/login/error", status_code=303)
 
 @router.post("/reg-check")
 async def reg_check(request: Request, username: str =  Form(...), password: str = Form(...), email: str = Form(...)):
-    User.register_user(username, password, email)
-    return RedirectResponse(url="/login", status_code=303)
+    message = User.register_user(username, password, email)
+    if (message == "Vorhanden"):
+        return RedirectResponse(url="/reg/message=vorhanden", status_code=303)
+    else:
+        return RedirectResponse(url="/login/e", status_code=303)
 
 @router.get("/logout")
 async def logout(request: Request):
