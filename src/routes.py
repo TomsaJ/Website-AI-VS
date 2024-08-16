@@ -182,8 +182,8 @@ async def login_check(request: Request, username: str =  Form(...), password: st
         raise HTTPException(status_code=401, detail="Ungültige Anmeldeinformationen")
 
 @router.post("/reg-check")
-async def reg_check(request: Request, username: str =  Form(...), password: str = Form(...)):
-    User.register_user(username, password)
+async def reg_check(request: Request, username: str =  Form(...), password: str = Form(...), email: str = Form(...)):
+    User.register_user(username, password, email)
     return RedirectResponse(url="/login", status_code=303)
 
 @router.get("/logout")

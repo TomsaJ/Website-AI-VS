@@ -3,13 +3,14 @@ import os
 import sys
 from .db import Db
 
-src_path = os.path.join(os.path.dirname(__file__), 'src')
-sys.path.append(src_path)
-
 class User:
     @staticmethod
-    def register_user(username, password):
+    def register_user(username, password, email):
         # Generate a new salt
+        e = Db.check_email(email)
+        if (e):
+            print("Vorhanden")
+            return "Vorhanden"
         salt = User.generate_salt()
         # Hash the password using the generated salt
         hashed_password = User.hash_password(password, salt)
@@ -17,7 +18,7 @@ class User:
         hashed_password_with_salt = salt.decode('utf-8') + hashed_password.decode('utf-8')
 
         # Store the hashed password with salt in the database
-        info = Db.register_user(username, hashed_password_with_salt)
+        info = Db.register_user(username, hashed_password_with_salt, email)
         print (hashed_password_with_salt)
         return info
 
