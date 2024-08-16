@@ -12,11 +12,35 @@ class Db:
     @staticmethod
     def sanitize_input(input_str):
         if isinstance(input_str, str):
-            sanitized_str = re.sub(r'[^\w\s\-\\\/\.]', '', input_str)
+            sanitized_str = re.sub(r'[^\w\s\-\\\/\.\@]', '', input_str)
             return sanitized_str
         else:
             return input_str
 
+    @staticmethod
+    def check_email(email):
+        connection = Db.db_conn()
+        if connection is None:
+            return None
+        try:
+            email = Db.sanitize_input(email)
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM user WHERE email = %s", (email,))
+                result = cursor.fetchone()
+            # Ensure that all results are processed.
+                cursor.fetchall()  # This ensures no unread results remain.
+
+                if result:
+                    return True
+                else:
+                    return False
+        except Error as e:
+            print(f"Error checking email: {e}")
+            return None
+        finally:
+        # Close the connection only if it is still open
+            if connection.is_connected():
+                connection.close()
 
     @staticmethod
     def db_conn():
@@ -35,27 +59,8 @@ class Db:
         except Error as e:
             print(f"Fehler bei der Datenbankverbindung: {e}")
             return None
-    @staticmethod
-    def get_user_salt(username):
-        connection = Db.db_conn()
-        if connection is None:
-            return None
-        try:
-            sanitized_username = Db.sanitize_input(username)
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT salt FROM user WHERE username = %s", (sanitized_username,))
-                result = cursor.fetchone()
-                if result:
-                    return result[0]
-                else:
-                    return None
-        except Error as e:
-            print(f"Error fetching salt: {e}")
-            return None
-        finally:
-            if connection.is_connected():
-                connection.close()
 
+    @staticmethod
     def insert_video(path, user, folder, time):
         connection = Db.db_conn()
         if connection is None:
@@ -77,6 +82,7 @@ class Db:
         finally:
             connection.close()
 
+    @staticmethod
     def get_videos(user):
         connection = Db.db_conn()
         if user == "null":
@@ -129,7 +135,7 @@ class Db:
             finally:
                 if connection.is_connected():
                     connection.close()
-
+    @staticmethod
     def get_all_lang():
         connection = Db.db_conn()
         if connection is None:
@@ -149,7 +155,7 @@ class Db:
         finally:
             if connection.is_connected():
                 connection.close()
-
+    @staticmethod
     def get_language_code(lang):
         connection = Db.db_conn() 
         if connection is None:
@@ -172,13 +178,15 @@ class Db:
                 connection.close()  # Close the database connection if it is open
 
     @staticmethod
-    def register_user(username, hashed_password):
+    def register_user(username, hashed_password, email):
         connection = Db.db_conn()
+        username = Db.sanitize_input(username)
+        email = Db.sanitize_input(email)
         try:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "INSERT INTO user (username, password) VALUES (%s, %s)",
-                    (username, hashed_password)
+                    "INSERT INTO user (username, password, email) VALUES (%s, %s, %s)",
+                    (username, hashed_password,email )
                 )
                 connection.commit()
                 return True
@@ -209,7 +217,7 @@ class Db:
         finally:
             if connection.is_connected():
                 connection.close()
-
+    @staticmethod
     def delete_video(time):
         connection = Db.db_conn()
         thirty_days_in_milliseconds = 30 * 24 * 60 * 60 * 1000
@@ -236,4 +244,23 @@ class Db:
             if connection.is_connected():
                 connection.close()
 
-
+        @staticmethod
+        def check_email(email):
+            connection = Db.db_conn()
+            if connection is None:
+                return None
+            try:
+                email = Db.sanitize_input(email)
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT salt FROM user WHERE username = %s", (email,))
+                    result = cursor.fetchone()
+                    if result:
+                        return True
+                    else:
+                        return False
+            except Error as e:
+                print(f"Error fetching salt: {e}")
+                return None
+            finally:
+                if connection.is_connected():
+                    connection.close()
