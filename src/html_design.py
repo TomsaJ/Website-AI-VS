@@ -30,7 +30,7 @@ class Html:
         if logged_in:
             content += '''<li style="float: right"><a href="/logout">Logout</a></li>'''
         else:
-            content += '''<li style="float: right"><a href="/login">Login</a></li>'''
+            content += '''<li style="float: right"><a href="/login/e">Login</a></li>'''
     
         content += '''<li style="float: right"><a href="/about">About</a></li>
         </ul>'''

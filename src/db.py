@@ -202,21 +202,25 @@ class Db:
         connection = Db.db_conn()
         if connection is None:
             return None
+        
         try:
             sanitized_username = Db.sanitize_input(username)
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT password, username FROM user WHERE username = %s", (sanitized_username,))
-                result = cursor.fetchone()
-                if result:
-                    return result
-                else:
-                    return None
+            cursor = connection.cursor()
+            cursor.execute("SELECT password, username FROM user WHERE username = %s", (sanitized_username,))
+            result = cursor.fetchone()
+            cursor.close()
+            
+            if result:
+                return result
+            else:
+                return None
+        
         except Error as e:
             print(f"Error fetching user data: {e}")
             return None
-        finally:
-            if connection.is_connected():
-                connection.close()
+        
+        
+
     @staticmethod
     def delete_video(time):
         connection = Db.db_conn()

@@ -9,7 +9,6 @@ class User:
         # Generate a new salt
         e = Db.check_email(email)
         if (e):
-            print("Vorhanden")
             return "Vorhanden"
         salt = User.generate_salt()
         # Hash the password using the generated salt
@@ -19,8 +18,7 @@ class User:
 
         # Store the hashed password with salt in the database
         info = Db.register_user(username, hashed_password_with_salt, email)
-        print (hashed_password_with_salt)
-        return info
+        return "Erstellt"
 
     @staticmethod
     def authenticate_user(username, password):
@@ -38,7 +36,7 @@ class User:
             
             # Compare the hashed input password with the stored password
             if login_hash_password_with_salt == stored_hashed_password_with_salt:
-                return result[1] # Username
+                return True # Username
             else:
                 return False
         else:
