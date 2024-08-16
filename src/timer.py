@@ -21,7 +21,6 @@ class Time:
             await asyncio.sleep(1)  # Wait 1 second
 
     async def async_method():
-        # Here comes the code of your asynchronous method
         filename = 'time.csv'
         await Time.calculate_average(filename)
 
@@ -95,3 +94,12 @@ class Time:
         print(f'Die Installation wird {time_init % 60: .2f} Minuten dauern')
         print("...")
         return time_init
+
+    @staticmethod
+    def add_newtime(new_d , duration):
+        new_time = new_d/duration
+        print(new_time)
+        old_f = FileManager.readjson()
+        new_f = (old_f + new_time)/2
+        FileManager.writejsonfile(new_f)
+

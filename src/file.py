@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 import ffmpeg
-
+import json
 from moviepy.editor import VideoFileClip
 
 class FileManager:
@@ -109,4 +109,20 @@ class FileManager:
         video_duration = clip.duration
         clip.close()
         return video_duration
+    
+    @staticmethod
+    def readjson():
+        with open("src/data.json", "r") as json_file:
+            loaded_data = json.load(json_file)
+        selected_value = loaded_data.get("duration")
+        return selected_value
 
+    @staticmethod
+    def jsonfile(neededtime):
+        json_file_path = "src/data.json"
+        if os.path.exists(json_file_path):
+            return
+        else:
+            data = {"duration": neededtime}
+            with open(json_file_path, "w") as json_file:
+                json.dump(data, json_file)

@@ -94,10 +94,11 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         file_location = os.path.join(upload_dir, new_filename)
         with open(file_location, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-        
+        faktor = FileManager.readjson()
         video_duration = FileManager.duration_video(file_location)
-        duration = ProgramDesign.duration(video_duration, 0.18)
-        
+        duration = ProgramDesign.duration(video_duration, faktor)
+        print (faktor)
+        print (duration)
     except Exception as e:
         logging.error(f"Fehler beim Hochladen der Datei: {e}")
     try:
@@ -109,21 +110,22 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         "duration": duration,
         "lang": lang,
         "user": user,
-        "time": timestamp,
+        "timestamp": timestamp,
         "foot":footer, "header": header
     })
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
 @router.post("/uploadfile/")
-async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...), user: int = Form(...), time: str= Form(...)):
+async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...), user: str = Form(...), timestamp: int= Form(...)):
+    start = time.time()
     file_path = Path(file_location)
     file_name = file_path.name
     filename = FileManager.get_file_name(file_path)
     tmp_file_path = FileManager.copy_to_tmp_directory(file_path, filename)
     FileManager.delete_tmp_file(file_path)
     print(tmp_file_path)
-    SubtitleGen.create_subtitles(tmp_file_path, filename, lang)
+    SubtitleGen.create_subtitles(tmp_file_path, filename, lang, "medium")
     output_file = 'videos' + PATH_SEPARATOR +filename + PATH_SEPARATOR + filename + '_subtitle.mp4'
     subtitle = 'videos' + PATH_SEPARATOR +filename + PATH_SEPARATOR + filename + '_subtitle.srt'
     file_path = 'videos' + PATH_SEPARATOR +filename + PATH_SEPARATOR + filename + '.mp4'
@@ -131,11 +133,14 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file, lang)
     folder = "videos" + PATH_SEPARATOR + filename + PATH_SEPARATOR
     try:
-        Db.insert_video(output_file, user, folder, time)
+        Db.insert_video(output_file, user, folder, timestamp)
         print("Yes")
         request.session['output_file'] = output_file 
+        end = time.time()
+        new_d = end-start
+        Time.add_newtime(new_d , duration)
     except:
-        folder = PATH_SEPARATOR +"videos"+PATH_SEPARATOR + file_name
+        folder = PATH_SEPARATOR +"videos"+PATH_SEPARATOR + filename
         FileManager.delete_tmp_folder(folder)
         print("No")
     return RedirectResponse(url="/me", status_code=303)
