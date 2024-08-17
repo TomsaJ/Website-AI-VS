@@ -24,7 +24,7 @@ class Html:
         content = '''<nav style= "width: 100%; position: fixed;"   ><ul style="height: 74px;">
         <li >
         <a href="/">
-            <img style="height: 46px; width: 46px;" src="/static/image/Logo.png" alt="Logo">
+            <img style="height: 75px; width: 75px; margin-top: -15px" src="/static/image/Logo.png" alt="Logo">
 
         </a>
     </li>
