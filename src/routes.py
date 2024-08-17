@@ -211,10 +211,11 @@ async def logout(request: Request):
 @router.get("/me", response_class=HTMLResponse)
 async def me_page(request: Request):
     username = request.session.get('user')
-    video = Db.get_videos(username)
+    
     logged_in = False
     if username:
         user = "Willkomen, " + username
+        video = Db.get_videos(username)
         logged_in = True
     else:
         user = '''<h2>Melde dich bitte an!</h2><br>
