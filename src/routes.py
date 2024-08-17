@@ -124,6 +124,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
 
 @router.post("/uploadfile/")
 async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...), user: str = Form(...), timestamp: int= Form(...)):
+    print("User: '" + request.session.get('user') + "' startet eine Verarbeitung. Videolänge: " + str(video_duration) + " s. Speicherort: " + file_location )
     start = time.time()
     file_path = Path(file_location)
     file_name = file_path.name

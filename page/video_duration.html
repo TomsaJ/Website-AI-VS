@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/css/style.css') }}">
-    <title>Datei hochladen</title>
+    <title>WS-AI-VS</title>
     <style>
         body{
         /*background-color: #212121;*/
@@ -136,8 +136,9 @@
     
     {{foot | safe}}
     {{header | safe}}
+
     <div class="zentriert">
-        
+        <div style="margin-top: 50px;"></div>
         <span class="title">Upload Bestätigen</span>
         <form class="form" id="uploadForm" action="/uploadfile/" method="post" enctype="multipart/form-data">
           <div class="group">
