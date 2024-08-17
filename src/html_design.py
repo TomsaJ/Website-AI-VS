@@ -38,8 +38,8 @@ class Html:
         else:
             content += '''<li style="float: right"><a style="padding-top: 30px;padding-bottom: 30px;" href="/login/e">Login</a></li>'''
     
-        content += '''<li style="float: right"><a style="padding-top: 30px;padding-bottom: 30px;" href="/about">About</a></li>
-        </ul>'''
+        #content += '''<li style="float: right"><a style="padding-top: 30px;padding-bottom: 30px;" href="/about">About</a></li>'''
+        content += '''</ul>'''
         return content
     
     def foot(user):
