@@ -5,9 +5,10 @@ tmp/
 .ipynb_checkpoints/
 src/.ipynb_checkpoints/
 src/time.csv
-*.mp4
 *.srt
 src/db_config.json
 .idea/
 venv
 videos/*
+uploads/*
+sonstiges/test_video/*

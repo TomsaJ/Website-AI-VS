@@ -63,13 +63,18 @@ async def about_page(request: Request):
 async def upload_page(request: Request):
     logged_in = False
     username = request.session.get('user')
+    lang = Db.get_all_lang()
     if username:
+        upload = Html.upload(lang)
         logged_in = True
+    else:
+        upload = '''<h2>Melde dich bitte an!</h2><br>
+<button onclick="window.location.href='/login/e'">Anmelden</button>'''
     header = Html.header(logged_in)
     footer = Html.foot(username)
     try:
-        lang = Db.get_all_lang()
-        return templates.TemplateResponse("upload.html", {"request": request, "lang": lang, "user": username, "foot":footer, "header": header})
+        
+        return templates.TemplateResponse("upload.html", {"request": request, "upload": upload, "lang": lang, "user": username, "foot":footer, "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
@@ -110,7 +115,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         "video_duration": video_duration,
         "duration": duration,
         "lang": lang,
-        "user": user,
+        "user": username,
         "timestamp": timestamp,
         "foot":footer, "header": header
     })
@@ -119,6 +124,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
 
 @router.post("/uploadfile/")
 async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...), user: str = Form(...), timestamp: int= Form(...)):
+    print("User: '" + user + "' startet eine Verarbeitung. Videolänge: " + str(video_duration) + " s. Speicherort: " + file_location )
     start = time.time()
     file_path = Path(file_location)
     file_name = file_path.name
@@ -134,7 +140,8 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file, lang)
     folder = "videos" + PATH_SEPARATOR + filename + PATH_SEPARATOR
     try:
-        Db.insert_video(output_file, user, folder, timestamp)
+        username = request.session.get('user')
+        Db.insert_video(output_file, username, folder, timestamp)
         print("Yes")
         #request.session['output_file'] = output_file 
         end = time.time()
@@ -206,10 +213,11 @@ async def logout(request: Request):
 @router.get("/me", response_class=HTMLResponse)
 async def me_page(request: Request):
     username = request.session.get('user')
-    video = Db.get_videos(username)
+    
     logged_in = False
     if username:
         user = "Willkomen, " + username
+        video = Db.get_videos(username)
         logged_in = True
     else:
         user = '''<h2>Melde dich bitte an!</h2><br>
