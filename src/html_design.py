@@ -21,7 +21,7 @@ class Html:
     </script> '''
         return content
     def header(logged_in):
-        content = '''<ul style="height: 74px;">
+        content = '''<nav style= "width: 100%; position: fixed;"   ><ul style="height: 74px;">
         <li >
         <a href="/">
             <img style="height: 46px; width: 46px;" src="/static/image/Logo.png" alt="Logo">
@@ -39,7 +39,7 @@ class Html:
             content += '''<li style="float: right"><a style="padding-top: 30px;padding-bottom: 30px;" href="/login/e">Login</a></li>'''
     
         #content += '''<li style="float: right"><a style="padding-top: 30px;padding-bottom: 30px;" href="/about">About</a></li>'''
-        content += '''</ul>'''
+        content += '''</ul></nav>'''
         return content
     
     def foot(user):

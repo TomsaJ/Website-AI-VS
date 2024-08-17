@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.config import Config
 from starlette.middleware.sessions import SessionMiddleware
-
+from src.installPackage import PackageInstaller
 # Custom module imports
 from src.routes import router as main_router  # Import the router from routes.py
 
@@ -30,15 +30,8 @@ def install_packages():
     ]
 
     for package in packages:
-        if not package_installed(package):
-            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-        else:
-            print(f"{package} ist bereits installiert.")
+        PackageInstaller.check_and_install_package(package)
 
-def package_installed(package_name):
-    # Checks if a package is installed.
-    package_spec = importlib.util.find_spec(package_name)
-    return package_spec is not None
 
 install_packages()
 
