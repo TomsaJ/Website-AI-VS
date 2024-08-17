@@ -13,6 +13,7 @@ from .file import FileManager
 from .db import Db
 from .design import ProgramDesign
 from .user import User
+from .timer import Time
 
 router = APIRouter()
 

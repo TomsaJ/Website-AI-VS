@@ -72,7 +72,7 @@ class Db:
             # Ensure that all results are processed.
                 cursor.fetchall()  # This ensures no unread results remain.
                 a = result[0]
-                return int(a)
+                return a
         except Error as e:
             print(f"Error checking email: {e}")
             return None
@@ -84,7 +84,6 @@ class Db:
     @staticmethod
     def insert_video(path, user, folder, time):
         user_id = Db.get_user_id(user)
-        user_id = 1
         connection = Db.db_conn()
         print (user_id)
         if connection is None:

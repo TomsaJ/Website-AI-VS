@@ -12,6 +12,15 @@ src_path = os.path.join(os.path.dirname(__file__), 'src')
 sys.path.append(src_path)
 
 class Time:
+
+    @staticmethod
+    def add_newtime(new_d , duration):
+        new_time = new_d/duration
+        print(new_time)
+        old_f = FileManager.readjson()
+        new_f = (old_f + new_time)/2
+        FileManager.writejsonfile(new_f)
+
     @staticmethod
     async def timer():
         start_time = time.time()
@@ -20,10 +29,12 @@ class Time:
             print("Elapsed Time: {:.2f} seconds".format(elapsed_time))
             await asyncio.sleep(1)  # Wait 1 second
 
+    @staticmethod
     async def async_method():
         filename = 'time.csv'
         await Time.calculate_average(filename)
 
+    @staticmethod
     def calculate_average():
         filename = os.path.join(os.getcwd(), 'src', 'time.csv')
         total = 0
@@ -41,6 +52,7 @@ class Time:
         average = total / count 
         return average
 
+    @staticmethod
     def fill_file(paths):
         ini_time = time.time()
         i = 0
@@ -95,11 +107,4 @@ class Time:
         print("...")
         return time_init
 
-    @staticmethod
-    def add_newtime(new_d , duration):
-        new_time = new_d/duration
-        print(new_time)
-        old_f = FileManager.readjson()
-        new_f = (old_f + new_time)/2
-        FileManager.writejsonfile(new_f)
 
