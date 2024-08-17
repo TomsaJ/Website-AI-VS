@@ -63,13 +63,18 @@ async def about_page(request: Request):
 async def upload_page(request: Request):
     logged_in = False
     username = request.session.get('user')
+    lang = Db.get_all_lang()
     if username:
+        upload = Html.upload(lang)
         logged_in = True
+    else:
+        upload = '''<h2>Melde dich bitte an!</h2><br>
+<button onclick="window.location.href='/login/e'">Anmelden</button>'''
     header = Html.header(logged_in)
     footer = Html.foot(username)
     try:
-        lang = Db.get_all_lang()
-        return templates.TemplateResponse("upload.html", {"request": request, "lang": lang, "user": username, "foot":footer, "header": header})
+        
+        return templates.TemplateResponse("upload.html", {"request": request, "upload": upload, "lang": lang, "user": username, "foot":footer, "header": header})
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
 
