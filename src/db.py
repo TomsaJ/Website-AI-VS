@@ -61,19 +61,42 @@ class Db:
             return None
 
     @staticmethod
-    def insert_video(path, user, folder, time):
+    def get_user_id(username):
         connection = Db.db_conn()
+        if connection is None:
+            return None
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT id FROM user WHERE username = %s", (username,))
+                result = cursor.fetchone()
+            # Ensure that all results are processed.
+                cursor.fetchall()  # This ensures no unread results remain.
+                a = result[0]
+                return int(a)
+        except Error as e:
+            print(f"Error checking email: {e}")
+            return None
+        finally:
+        # Close the connection only if it is still open
+            if connection.is_connected():
+                connection.close()
+
+    @staticmethod
+    def insert_video(path, user, folder, time):
+        user_id = Db.get_user_id(user)
+        user_id = 1
+        connection = Db.db_conn()
+        print (user_id)
         if connection is None:
             return "Connection to the database failed."
         try:
             with connection.cursor() as cursor:
                 sanitized_path = Db.sanitize_input(path)
-                sanitized_user = Db.sanitize_input(user)
                 sanitized_folder = Db.sanitize_input(folder)
 
                 cursor.execute(
                     "INSERT INTO videos (path, user, folder, time) VALUES (%s, %s, %s, %s)",
-                    (sanitized_path, sanitized_user, sanitized_folder, time)
+                    (sanitized_path, user_id, sanitized_folder, time)
                 )
                 connection.commit()
                 print("Zeile erfolgreich hinzugefügt")
@@ -84,6 +107,7 @@ class Db:
 
     @staticmethod
     def get_videos(user):
+        user_id = Db.get_user_id(user)
         connection = Db.db_conn()
         if user == "null":
             try:
@@ -110,7 +134,7 @@ class Db:
                 sanitized_user = Db.sanitize_input(user)
                 with connection.cursor() as cursor:
                     sql_query = "SELECT path, folder FROM videos WHERE user = %s"
-                    cursor.execute(sql_query, (sanitized_user,))
+                    cursor.execute(sql_query, (user_id,))
                     myresult = cursor.fetchall()
 
                     if not myresult:

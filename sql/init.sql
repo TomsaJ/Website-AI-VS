@@ -13,46 +13,37 @@ SET time_zone = "+00:00";
 
 USE `WS-AI-VS`;
 
--- VIDEOS
-CREATE TABLE `videos` (
-  `id` varchar(255) NOT NULL,
-  `path` varchar(255) NOT NULL,
-  `user` varchar(80) NOT NULL,
-  `folder` varchar(80) NOT NULL,
-  `time` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-ALTER TABLE `videos`
-ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `videos`
-MODIFY `id` int
-(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
-COMMIT;
-
 -- USER
 CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(80) NOT NULL,
-  `password` varchar(89) NOT NULL
+  `password` varchar(89) NOT NULL,
+  `email` varchar(256) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- VIDEOS
+CREATE TABLE `videos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `path` varchar(255) NOT NULL,
+  `user` int(11) NOT NULL,
+  `folder` varchar(80) NOT NULL,
+  `time` int(10) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user`) REFERENCES `user`(`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-INSERT INTO `user` VALUES ('admin', 'admin');
 
-
---
--- Tabellenstruktur für Tabelle `language`
---
-
+-- LANGUAGE
 CREATE TABLE `language` (
   `language_code` varchar(4) NOT NULL,
-  `language_name` varchar(80) NOT NULL
+  `language_name` varchar(80) NOT NULL,
+  PRIMARY KEY (`language_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
 -- Daten für Tabelle `language`
---
-
 INSERT INTO `language` (`language_code`, `language_name`) VALUES
 ('en', 'english'),
 ('zh', 'chinese'),
@@ -153,7 +144,3 @@ INSERT INTO `language` (`language_code`, `language_name`) VALUES
 ('su', 'sundanese'),
 ('yue', 'cantonese');
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

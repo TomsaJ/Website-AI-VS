@@ -10,3 +10,4 @@ src/time.csv
 src/db_config.json
 .idea/
 venv
+videos/*

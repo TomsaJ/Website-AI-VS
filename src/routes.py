@@ -135,7 +135,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     try:
         Db.insert_video(output_file, user, folder, timestamp)
         print("Yes")
-        request.session['output_file'] = output_file 
+        #request.session['output_file'] = output_file 
         end = time.time()
         new_d = end-start
         Time.add_newtime(new_d , duration)
