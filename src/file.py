@@ -118,7 +118,7 @@ class FileManager:
         return selected_value
 
     @staticmethod
-    def jsonfile(neededtime):
+    def writejsonfile(neededtime):
         json_file_path = "src/data.json"
         if os.path.exists(json_file_path):
             return
