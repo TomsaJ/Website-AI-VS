@@ -107,4 +107,10 @@ class Time:
         print("...")
         return time_init
 
+    @staticmethod
+    def duration(video_duration, d):
+        print(f"Dauert: {(video_duration * d)/60:.2f} Minuten")
+        d = ((video_duration * d)/60)
+        return d
+
 

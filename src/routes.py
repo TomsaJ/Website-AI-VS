@@ -102,7 +102,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
             shutil.copyfileobj(file.file, buffer)
         faktor = FileManager.readjson()
         video_duration = FileManager.duration_video(file_location)
-        duration = ProgramDesign.duration(video_duration, faktor)
+        duration = Time.duration(video_duration, faktor)
         print (faktor)
         print (duration)
     except Exception as e:

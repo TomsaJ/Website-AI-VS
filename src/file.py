@@ -71,10 +71,6 @@ class FileManager:
         # Return the file name
         return file_name
 
-    @staticmethod
-    def convert_subtitle_me(subtitle_file):
-        convert_file = ConvertFile(subtitle_file, "utf-8")
-        convert_file.convert()
 
     @staticmethod
     def combine_video_with_subtitle(video_file, subtitle_file, output_file, lang):
