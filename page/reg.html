@@ -58,7 +58,6 @@
     
 <br>
     <form class="form" action="/reg-check" method="post">
-        <p class="form-title">Sign in to your account</p>
          <div class="input-container">
            <input name="username" type="text"  placeholder="username" required>
            <span>
@@ -73,12 +72,12 @@
            <input name="password" type="password" placeholder="Enter password" required>
          </div>
           <button type="submit" class="submit">
-         Sign in
+            Registriere dich
        </button>
         <p>{{message | safe}}</p>
        <p class="signup-link">
-         No account?
-         <a href="">Sign up</a>
+         Doch schon ein Account?
+         <a href="/login/e">Melde dich an</a>
         </p>
     </form>
 </div>
