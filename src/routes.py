@@ -115,7 +115,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         "video_duration": video_duration,
         "duration": duration,
         "lang": lang,
-        "user": user,
+        "user": username,
         "timestamp": timestamp,
         "foot":footer, "header": header
     })
@@ -124,7 +124,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
 
 @router.post("/uploadfile/")
 async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...), user: str = Form(...), timestamp: int= Form(...)):
-    print("User: '" + request.session.get('user') + "' startet eine Verarbeitung. Videolänge: " + str(video_duration) + " s. Speicherort: " + file_location )
+    print("User: '" + user + "' startet eine Verarbeitung. Videolänge: " + str(video_duration) + " s. Speicherort: " + file_location )
     start = time.time()
     file_path = Path(file_location)
     file_name = file_path.name
@@ -140,7 +140,8 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
     FileManager.combine_video_with_subtitle(file_path, subtitle, output_file, lang)
     folder = "videos" + PATH_SEPARATOR + filename + PATH_SEPARATOR
     try:
-        Db.insert_video(output_file, user, folder, timestamp)
+        username = request.session.get('user')
+        Db.insert_video(output_file, username, folder, timestamp)
         print("Yes")
         #request.session['output_file'] = output_file 
         end = time.time()
