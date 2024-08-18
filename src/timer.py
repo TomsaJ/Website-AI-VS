@@ -6,17 +6,12 @@ from moviepy.editor import VideoFileClip
 from .subtitle_gen import SubtitleGen
 from .file import FileManager
 
-# Custom module imports
-src_path = os.path.join(os.path.dirname(__file__), 'src')
-
-sys.path.append(src_path)
 
 class Time:
 
     @staticmethod
-    def add_newtime(new_d , duration):
+    def add_newfac(new_d , duration):
         new_time = new_d/duration
-        print(new_time)
         old_f = FileManager.readjson()
         new_f = (old_f + new_time)/2
         FileManager.writejsonfile(new_f)
