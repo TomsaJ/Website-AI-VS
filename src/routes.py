@@ -146,7 +146,7 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
         #request.session['output_file'] = output_file 
         end = time.time()
         new_d = end-start
-        Time.add_newtime(new_d , duration)
+        Time.add_newfac(new_d , duration)
     except:
         folder = PATH_SEPARATOR +"videos"+PATH_SEPARATOR + filename
         FileManager.delete_tmp_folder(folder)
