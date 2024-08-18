@@ -178,8 +178,10 @@ async def reg_page(request: Request, message: str = ""):
         logged_in = True
     header = Html.header(logged_in)
     footer = Html.foot(username)
-    if(message == "vorhanden"):
+    if(message == "Vorhanden"):
         message = "Email schon vorhanden"
+    elif (message == "UserVorhanden"):
+        message = "User schon vorhanden. Bitte anderen Usernamen wählen"
     else:
         message = ""
     try:
@@ -201,7 +203,9 @@ async def login_check(request: Request, username: str =  Form(...), password: st
 async def reg_check(request: Request, username: str =  Form(...), password: str = Form(...), email: str = Form(...)):
     message = User.register_user(username, password, email)
     if (message == "Vorhanden"):
-        return RedirectResponse(url="/reg/message=vorhanden", status_code=303)
+        return RedirectResponse(url="/reg/Vorhanden", status_code=303)
+    elif (message == "UserVorhanden"):
+        return RedirectResponse(url="/reg/UserVorhanden", status_code=303)
     else:
         return RedirectResponse(url="/login/e", status_code=303)
 
@@ -216,7 +220,7 @@ async def me_page(request: Request):
     
     logged_in = False
     if username:
-        user = "Willkomen, " + username
+        user = "Willkommen, " + username
         video = Db.get_videos(username)
         logged_in = True
     else:

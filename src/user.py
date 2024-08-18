@@ -8,8 +8,11 @@ class User:
     def register_user(username, password, email):
         # Generate a new salt
         e = Db.check_email(email)
+        a = Db.check_user(username)
         if (e):
             return "Vorhanden"
+        if (a):
+            return "UserVorhanden"
         salt = User.generate_salt()
         # Hash the password using the generated salt
         hashed_password = User.hash_password(password, salt)
