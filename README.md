@@ -1,6 +1,6 @@
 # Website-AI-VS
 
-[![Beispielvideo](static/video/example_screenshot.png)](static/video/example.mp4)
+[![Beispielvideo](readme/user.png)](static/video/example.mp4)
 
 
 ## Beschreibung
