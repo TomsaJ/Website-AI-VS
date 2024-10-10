@@ -1,14 +1,10 @@
 # Website-AI-VS
-
-[![Beispielvideo](readme/user.png)](static/video/example.mp4)
-
-
 ## Beschreibung
 Das Projekt Website-AI-VS ist eine Erweiterung des Projekts [Projekt-KI-Untertitel](https://github.com/TomsaJ/Projekt-KI-Untertitel). Das Projekt [Projekt-KI-Untertitel](https://github.com/TomsaJ/Projekt-KI-Untertitel) ist eine reine Konsolenanwendung, diese in diesem Projekt Website-AI-VS zu 
 einer Webanwednung umgebaute worden ist. Außerdem ist die Anwendnug erweiter worden und beinhaltet somit mehr Funktionen und Möglichkeiten.
 Diese Webanwednung erstellt einen Untertitel mit dem KI-Model [Whisper](https://github.com/openai/whisper), das von OpenAI entwickelt worden ist. Es wird zum einen eine Untertitel-Datei (srt) erstellt,
 die anschließend mit einem Video (mp4) zusammen kombiniert wird. Außerdem wird eine Text-Datei (txt) erstellt, in der der gesamte gesprochenen Text gespeichert wird. Die Untertitelten Videos sind im Benutzerbereich dem Untertiteln zu finden. 
-<img src= "readme/user.png" style= "width: auto; height: 300px" title="Benutzerbereich" >
+<br><img src= "readme/user.png" style= "width: auto; height: 300px" title="Benutzerbereich" >
 
 ### Version
     Aktuelle Version: v0.8
