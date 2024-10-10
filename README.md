@@ -1,8 +1,6 @@
 # Website-AI-VS
-<video style="width: 100%; height: auto;" controls autoplay>
-    <source src="static/video/example.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
+
+[![Beispielvideo](static/video/example_screenshot.png)](static/video/example.mp4)
 
 
 ## Beschreibung
