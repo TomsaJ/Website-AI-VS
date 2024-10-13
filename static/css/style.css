@@ -34,7 +34,7 @@ li a {
 
 li a:hover:not(.active) {
     background-color: #d9489c;
-    color: #212121;
+    color: white;
 }
 
 .active {
@@ -304,7 +304,6 @@ footer {
 #button:hover{
     background-color: white;
     color: #d9489c;
-    margin: 1px;
     border: 1px solid #d9489c;
 }
 
@@ -319,7 +318,7 @@ footer {
 }
 
 
-/* From Uiverse.io by SouravBandyopadhyay */ 
+/* From Uiverse.io by SouravBandyopadhyay Selber modifiziert*/ 
 .hourglassBackground {
   position: relative;
   background-color: #3366cc; /*rgb(71, 60, 60);*/
@@ -407,7 +406,7 @@ footer {
   border-radius: 50%;
   width: 44px;
   height: 44px;
-  background-color: #999999;
+  background-color: #d9489c; /*#999999;*/
 }
 
 .hourglassGlass {
@@ -417,8 +416,8 @@ footer {
   left: 20px;
   width: 10px;
   height: 6px;
-  background-color: #999999;
-  opacity: 0.5;
+  background-color: #d9489c; /*#999999;*/
+  opacity: 0.75;
 }
 
 .hourglassGlass:before,
@@ -426,7 +425,7 @@ footer {
   content: '';
   display: block;
   position: absolute;
-  background-color: #999999;
+  background-color: #d9489c; /*#999999;*/
   left: -17px;
   width: 44px;
   height: 28px;

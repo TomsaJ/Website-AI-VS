@@ -24,7 +24,7 @@ class Html:
         content = '''<ul style="height: 74px;">
         <li >
         <a href="/">
-           <img style="height: 75px; width: 75px; margin-top: -15px" src="/static/image/Logo.png" alt="Logo">
+            <img style="height: 46px; width: 46px;" src="/static/image/Logo.png" alt="Logo">
 
         </a>
     </li>
@@ -36,7 +36,7 @@ class Html:
         if logged_in:
             content += '''<li style="float: right"><a style="padding-top: 30px;padding-bottom: 30px;" href="/logout">Logout</a></li>'''
         else:
-            content += '''<li style="float: right"><a style="padding-top: 30px;padding-bottom: 30px;" href="/login/s">Login</a></li>'''
+            content += '''<li style="float: right"><a style="padding-top: 30px;padding-bottom: 30px;" href="/login/e">Login</a></li>'''
     
         #content += '''<li style="float: right"><a style="padding-top: 30px;padding-bottom: 30px;" href="/about">About</a></li>'''
         content += '''</ul>'''
@@ -47,7 +47,7 @@ class Html:
             content = f'''
         <footer id="myFooter">
         <p style="float:left; margin-left: 10px; color: white">Angemeldet als: {user}</p>
-        <p style="float:right; margin-right: 10px; color: white"> Developer: <a href="https://github.com/LaRocc" style="color: white;">LaRocc</a> and <a href="https://github.com/TomsaJ" style="color: white;">TomsaJ</a></p>
+        <p style="float:right; margin-right: 10px; color: white"> Developer: <a href="https://github.com/LaRocc" style="color: #d9489c;">LaRocc</a> and <a href="https://github.com/TomsaJ" style="color: #d9489c;">TomsaJ</a></p>
         </footer>
         '''
         else:
@@ -64,7 +64,7 @@ class Html:
         <span class="title">Video hochladen</span>
         <form class="form" id="uploadForm" action="/upload_duration/" method="post" enctype="multipart/form-data">
           <div class="group">
-          <input  name="file" type="file" accept=".mp4" required>
+          <input  name="file" type="file" accept=".mp4" required="">
           <label for="name">Datei</label>
           </div>
       <div class="group">
@@ -76,7 +76,7 @@ class Html:
           </div>
           <input type="hidden" name="user" value="{{ user }}">
           <br>
-          <button  style="margin-left: 300px ;" type="submit">Hochladen</button>
+          <button style="margin-left: 300px ; type="submit">Hochladen</button>
         </form>
       </div>
         '''

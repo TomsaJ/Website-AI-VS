@@ -171,7 +171,7 @@ class Db:
                         '</video> <br>'
                         f"""
                         <a style=" display: inline-block;margin-right: 0;" href="{x[0]}" download>
-                            <button type='button' class='btn' id='button' >Originaldatei herunterladen</button>
+                            <button type='button' class='btn' id='button' >Übersetztes Video herunterladen</button>
                         </a>
                         <a style=" display: inline-block;margin-right: 0;" href="{x[1]}{FileManager.get_file_name(x[0])}.srt" download>
                         <button type='button' class='btn' id='button' >Untertitel herunterladen (.srt)</button>
