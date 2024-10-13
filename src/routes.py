@@ -65,6 +65,7 @@ async def upload_page(request: Request):
     username = request.session.get('user')
     lang = Db.get_all_lang()
     if username:
+        timeout(request)
         upload = Html.upload(lang)
         logged_in = True
     else:
@@ -84,6 +85,7 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
     logged_in = False
     username = request.session.get('user')
     if username:
+        timeout(request)
         logged_in = True
     header = Html.header(logged_in)
     footer = Html.foot(username)
@@ -226,9 +228,9 @@ async def logout(request: Request):
 @router.get("/me", response_class=HTMLResponse)
 async def me_page(request: Request):
     username = request.session.get('user')
-    
     logged_in = False
     if username:
+        timeout(request)
         user = "Willkomen, " + username
         video = Db.get_videos(username)
         logged_in = True
@@ -244,12 +246,12 @@ async def me_page(request: Request):
 
 def timeout(request):
     time_request = request.session.get('time')
-    thirty_m = 3 * 60
+    logintime = 3 * 60
     current_time = int(time.time())
     tmp = current_time - time_request
     print(tmp)
-    print(thirty_m)
-    if(tmp < thirty_m):
+    print(logintime)
+    if(tmp < logintime):
         refresh(request)
     else:
         request.session.clear()

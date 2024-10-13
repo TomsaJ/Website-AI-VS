@@ -53,7 +53,7 @@ class Html:
         else:
             content = '''
         <footer id="myFooter">
-        <p style="float:right; margin-right: 10px; color: white"> Developer: <a href="https://github.com/LaRocc" style="color: white;">LaRocc</a> and <a href="https://github.com/TomsaJ" style="color: white;">TomsaJ</a></p>
+        <p style="float:right; margin-right: 10px; color: white"> Developer: <a href="https://github.com/LaRocc" style="color: #d9489c;">LaRocc</a> and <a href="https://github.com/TomsaJ" style="color: #d9489c;">TomsaJ</a></p>
         </footer>
         '''
         return content
