@@ -19,9 +19,10 @@ class ProgramDesign:
         ProgramDesign.lines()
     
     def duration(video_duration, d):
-        print(f"Dauert: {(video_duration * d)/60:.2f} Minuten")
-        d = ((video_duration * d)/60)
-        return d
+        #print(f"Dauert: {(video_duration * d)/60:.2f} Minuten")
+        d_in_minutes = (video_duration * d) / 60
+        seconds = (d_in_minutes - int(d_in_minutes)) * 60
+        return seconds
 
     def lines():
         print("=" * 65)

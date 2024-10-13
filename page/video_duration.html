@@ -49,6 +49,7 @@
     
     .group {
       position: relative;
+      width: 98%;
     }
     
     .form .group label {
@@ -138,46 +139,70 @@
     {{header | safe}}
 
     <div class="zentriert">
-        <div style="margin-top: 50px;"></div>
-        <span class="title">Upload Bestätigen</span>
-        <form class="form" id="uploadForm" action="/uploadfile/" method="post" enctype="multipart/form-data">
+      <div style="margin-top: 50px;"></div>
+      <span class="title">Upload Bestätigen</span>
+      <form class="form" id="uploadForm2" action="/uploadfile/" method="post" enctype="multipart/form-data">
           <div class="group">
-          <input name="file" value="{{ file_name }}" type="text"  disabled>
-          <label for="name">Datei</label>
+              <input name="file" value="{{ file_name }}" type="text" readonly>
+              <label for="name">Datei</label>
           </div>
-            <div class="group">
-                <input name="video_duration" value="{{ video_duration }} s" type="text"  disabled>
-                <label for="name">Videolänge</label>
-                </div>
-                <div class="group">
-                    <input name="duration" value="{{ duration }} s" type="text"  disabled>
-                    <label for="name">Generierungsdauer</label>
-                    </div>
-                    <input type="hidden" name="file" value="{{ file_name }}">
-        <input type="hidden" name="file_location" value="{{ file_location }}">
-        <input type="hidden" name="video_duration" value="{{ video_duration }}">
-        <input type="hidden" name="duration" value="{{ duration }}">
-        <input type="hidden" name="lang" value="{{ lang }}">
-        <input type="hidden" name="user" value="{{ user }}">
-        <input type="hidden" name="timestamp" value="{{timestamp}}">
-                    <button id="submitButton">Bestätigen und fortfahren</button>
-                    <a href="/upload/" ><button id="back" style="width: 100%;">Abbrechen und zurück</button></a>
-        </form>
+          <div class="group">
+              <input name="video_duration" value="{{ video_duration }} s" type="text" readonly>
+              <label for="name">Videolänge</label>
+          </div>
+          <div class="group">
+              <input name="duration" value="{{ duration }} s" type="text" readonly>
+              <label for="name">Generierungsdauer</label>
+          </div>
+          <input type="hidden" name="file" value="{{ file_name }}">
+          <input type="hidden" name="file_location" value="{{ file_location }}">
+          <input type="hidden" name="video_duration" value="{{ video_duration }}">
+          <input type="hidden" name="duration" value="{{ duration }}">
+          <div class="group">
+              <input name="lang" value="{{ lang }}" type="text" readonly>
+              <label for="name">Sprache</label>
+          </div>
+          <p style="font-size: 14px;">Bei manchen Sprachen kann die Generierungsdauer abweichen, da sie möglicherweise komplexer für das Model sind</p>
+          <input type="hidden" name="user" value="{{ user }}">
+          <input type="hidden" name="timestamp" value="{{ timestamp }}">
+          <button style="margin-left: 300px;" id="submitButton">Bestätigen und fortfahren</button>
+          <a href="/upload/"><button style="width: 366px;" id="back" type="button">Abbrechen und zurück</button></a>
+      </form>
+        <br>
+        <p>Sollte das benötigte Model erst noch geladen werden kann die Generierungsdauer um bis zu 20 Sekunden länger dauern </p>
         
       </div>
-    <div id="loadingAnimation" class="circ" style="display:none;">
-        <div class="load">Loading . . . </div>
-        <div class="hands"></div>
-        <div class="body"></div>
-        <div class="head">
-            <div class="eye"></div>
+
+      <script>
+        document.getElementById('submitButton').addEventListener('click', function() {
+            document.getElementById('hourglassBackground').style.display = 'block';
+            document.getElementById('uploadForm2').submit();
+        });
+    </script>
+      <!--/* From Uiverse.io by SouravBandyopadhyay */ -->
+      <div id="hourglassBackground" style="display: none; margin-top: -15px;" class="hourglassBackground">
+        <div class="hourglassContainer">
+            <div class="hourglassCurves"></div>
+            <div class="hourglassCapTop"></div>
+            <div class="hourglassGlassTop"></div>
+            <div class="hourglassSand"></div>
+            <div class="hourglassSandStream"></div>
+            <div class="hourglassCapBottom"></div>
+            <div class="hourglassGlass"></div>
         </div>
     </div>
-    </div>
+    
     <script>
         document.getElementById('submitButton').addEventListener('click', function() {
-            document.getElementById('loadingAnimation').style.display = 'block';
-            document.getElementById('hiddenForm').submit();
+            const hourglassBackground = document.getElementById('hourglassBackground');
+            const hiddenForm = document.getElementById('hiddenForm');
+    
+            if (hourglassBackground && hiddenForm) {
+                hourglassBackground.style.display = 'block';
+                hiddenForm.submit();
+            } else {
+                console.error('Elements not found: hourglassBackground or hiddenForm.');
+            }
         });
     </script>
 

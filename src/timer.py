@@ -20,6 +20,7 @@ class Time:
         old_f = FileManager.readjson()
         new_f = (old_f + new_time)/2
         FileManager.writejsonfile(new_f)
+        return new_f
 
     @staticmethod
     async def timer():

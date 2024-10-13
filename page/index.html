@@ -44,18 +44,21 @@
         <h3>Was ist WS-KI-VS?</h3>
         <p>
         WS-KI-VS ist eine Webanwendung, die mit Hilfe von künstlicher Intellegenz einen Untertitel erstellen und diesen dann mit dem Video kombinieren kann. Das kombinierte Video
-        kann zur Zeit nur mit einem Unix-baiserten Gerät heruntergeladen werden. Alle anderen üssen Video und Untertitel selber zusammenfügen.  Als Software kann der <a style="color: #3366cc;" href="https://www.videolan.org/vlc/index.de.html">VLC Player</a> dienen. 
+        kann zur Zeit nur mit einem Unix-baiserten Gerät heruntergeladen werden. Alle anderen üssen Video und Untertitel selber zusammenfügen.  Als Software kann der <a style="color: #d9489c;" href="https://www.videolan.org/vlc/index.de.html">VLC Player</a> dienen. 
         Der Untertitel wird mit OpenAI Whisper erstellt. Whisper ist ein Modell, das von OpenAI entwickelt wurde. OpenAI ist mitunter auch für ChatGPT bekannt.
         </p>
         <br>
         <h3>Warum Whisper?</h3>
         <p>
-            Das Projekt WS-KI-VS wurde auf dem Projekt <a style="color: #3366cc;" href="https://github.com/TomsaJ/Projekt-KI-Untertitel.git">Projekt-KI-Untertitel</a> aufgebaut. In diesem Projekt wurde eine Konsolenanwendung mit Whisper entwickelt. Diese bildet den Grundstein für dieses Projekt.
-            Auch schon in dem Projekt <a style="color: #3366cc;" href="https://github.com/TomsaJ/Projekt-KI-Untertitel.git">Projekt-KI-Untertitel</a> wurde mit Whisper gearbeitet, da es eine sehr hohe Präzision hat. Auch bei starken auditiven Verzerrungen wie starken Winden oder komplexen Dialekten ist Whisper in der Lage, die gesprochene Sprache zu identifizieren.
+            Das Projekt WS-KI-VS wurde auf dem Projekt <a style="color: #d9489c;" href="https://github.com/TomsaJ/Projekt-KI-Untertitel.git">Projekt-KI-Untertitel</a> aufgebaut. In diesem Projekt wurde eine Konsolenanwendung mit Whisper entwickelt. Diese bildet den Grundstein für dieses Projekt.
+            Auch schon in dem Projekt <a style="color: #d9489c;" href="https://github.com/TomsaJ/Projekt-KI-Untertitel.git">Projekt-KI-Untertitel</a> wurde mit Whisper gearbeitet, da es eine sehr hohe Präzision hat. Auch bei starken auditiven Verzerrungen wie starken Winden oder komplexen Dialekten ist Whisper in der Lage, die gesprochene Sprache zu identifizieren.
         </p>
         <br>
         <h3>Wie funktionert diese Webanwendung</h3>
-        <p>Kurz zusemmen gefasst lädt der eingeloggt User eine Datei hoch und wählt dir Sprache aus, die als Untertitle erstellt werden soll. Nach der Bestätigung, wird der untertitle erzeugt. Abschließend wir der User ein die "Meine Videos"-Seite weitergeleitet, dort kann er das Video, sowie den Untertitel herunterladen.</p>
+        <p>Kurz zusammengefasst lädt der eingeloggt User eine Datei hoch und wählt dir Sprache aus, die als Untertitle erstellt werden soll. Nach der Bestätigung, wird der untertitle erzeugt. Abschließend wir der User ein die "Meine Videos"-Seite weitergeleitet, dort kann er das Video, sowie den Untertitel herunterladen.</p>
+        <br>
+        <h3>Info</h3>
+        <p>Da die Generierungzeit dynamsich anhand eines Faktorsberechtnet wird, ist zu empfehlen, die Software mit allen Sprachen jeweils 1-2 mal durchzulaufen. Dabei hat die Videolänge kein Einfluss</p>
         <br>
         <h3>Beispiel Ablauf</h3>
         <video style="width: 100%; height: 100%;" src="/static/video/example.mp4" autoplay></video>

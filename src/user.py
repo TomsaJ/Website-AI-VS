@@ -10,6 +10,9 @@ class User:
         e = Db.check_email(email)
         if (e):
             return "Vorhanden"
+        e = Db.check_user(username)
+        if (e):
+            return "uVorhanden"
         salt = User.generate_salt()
         # Hash the password using the generated salt
         hashed_password = User.hash_password(password, salt)
