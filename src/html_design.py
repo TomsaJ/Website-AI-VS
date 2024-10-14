@@ -47,13 +47,13 @@ class Html:
             content = f'''
         <footer id="myFooter">
         <p style="float:left; margin-left: 10px; color: white">Angemeldet als: {user}</p>
-        <p style="float:right; margin-right: 10px; color: white"> Developer: <a href="https://github.com/LaRocc" style="color: white;">LaRocc</a> and <a href="https://github.com/TomsaJ" style="color: white;">TomsaJ</a></p>
+        <p style="float:right; margin-right: 10px; color: white"> Developer: <a href="https://github.com/LaRocc" style="color: #d9489c;">LaRocc</a> and <a href="https://github.com/TomsaJ" style="color: #d9489c;">TomsaJ</a></p>
         </footer>
         '''
         else:
             content = '''
         <footer id="myFooter">
-        <p style="float:right; margin-right: 10px; color: white"> Developer: <a href="https://github.com/LaRocc" style="color: white;">LaRocc</a> and <a href="https://github.com/TomsaJ" style="color: white;">TomsaJ</a></p>
+        <p style="float:right; margin-right: 10px; color: white"> Developer: <a href="https://github.com/LaRocc" style="color: #d9489c;">LaRocc</a> and <a href="https://github.com/TomsaJ" style="color: #d9489c;">TomsaJ</a></p>
         </footer>
         '''
         return content
@@ -76,7 +76,7 @@ class Html:
           </div>
           <input type="hidden" name="user" value="{{ user }}">
           <br>
-          <button type="submit">Hochladen</button>
+          <button style="margin-left: 300px ; type="submit">Hochladen</button>
         </form>
       </div>
         '''

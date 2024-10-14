@@ -120,9 +120,6 @@ class FileManager:
     @staticmethod
     def writejsonfile(neededtime):
         json_file_path = "src/data.json"
-        if os.path.exists(json_file_path):
-            return
-        else:
-            data = {"duration": neededtime}
-            with open(json_file_path, "w") as json_file:
-                json.dump(data, json_file)
+        data = {"duration": neededtime}
+        with open(json_file_path, "w") as json_file:
+            json.dump(data, json_file)

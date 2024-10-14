@@ -41,6 +41,31 @@ class Db:
         # Close the connection only if it is still open
             if connection.is_connected():
                 connection.close()
+    
+    @staticmethod
+    def check_user(user):
+        connection = Db.db_conn()
+        if connection is None:
+            return None
+        try:
+            user = Db.sanitize_input(user)
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM user WHERE username = %s", (user,))
+                result = cursor.fetchone()
+            # Ensure that all results are processed.
+                cursor.fetchall()  # This ensures no unread results remain.
+
+                if result:
+                    return True
+                else:
+                    return False
+        except Error as e:
+            print(f"Error checking user: {e}")
+            return None
+        finally:
+        # Close the connection only if it is still open
+            if connection.is_connected():
+                connection.close()
 
     @staticmethod
     def db_conn():
@@ -145,9 +170,15 @@ class Db:
                         'Your browser does not support the video tag.'
                         '</video> <br>'
                         f"""
-                        <button onclick="window.location.href='{x[0]}'" download>Originaldatei herunterladen</button>
-                        <button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}.srt'" download>Untertitel herunterladen (.srt)</button>
-                        <button onclick="window.location.href='{x[1]}{FileManager.get_file_name(x[0])}_all.txt'" download>Textdatei herunterladen (.txt)</button>
+                        <a style=" display: inline-block;margin-right: 0;" href="{x[0]}" download>
+                            <button type='button' class='btn' id='button' >Übersetztes Video herunterladen</button>
+                        </a>
+                        <a style=" display: inline-block;margin-right: 0;" href="{x[1]}{FileManager.get_file_name(x[0])}.srt" download>
+                        <button type='button' class='btn' id='button' >Untertitel herunterladen (.srt)</button>
+                        </a>
+                        <a style=" display: inline-block;margin-right: 0;" href="{x[1]}{FileManager.get_file_name(x[0])}_all.txt" download>
+                        <button type='button' class='btn' id='button' >Textdatei herunterladen (.txt)</button>
+                        </a>
                         """
                         for x in myresult
                     ])

@@ -65,11 +65,12 @@ async def upload_page(request: Request):
     username = request.session.get('user')
     lang = Db.get_all_lang()
     if username:
+        timeout(request)
         upload = Html.upload(lang)
         logged_in = True
     else:
         upload = '''<h2>Melde dich bitte an!</h2><br>
-<button onclick="window.location.href='/login/e'">Anmelden</button>'''
+<button onclick="window.location.href='/login/s'">Anmelden</button>'''
     header = Html.header(logged_in)
     footer = Html.foot(username)
     try:
@@ -84,9 +85,11 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
     logged_in = False
     username = request.session.get('user')
     if username:
+        timeout(request)
         logged_in = True
     header = Html.header(logged_in)
     footer = Html.foot(username)
+
     try:
         upload_dir = UPLOAD_DIRECTORY
         if not os.path.exists(upload_dir):
@@ -103,24 +106,31 @@ async def upload_duration(request: Request, file: UploadFile = File(...), lang: 
         faktor = FileManager.readjson()
         video_duration = FileManager.duration_video(file_location)
         duration = ProgramDesign.duration(video_duration, faktor)
-        print (faktor)
-        print (duration)
+        print("Faktor:", faktor)
+
     except Exception as e:
         logging.error(f"Fehler beim Hochladen der Datei: {e}")
+        return HTMLResponse(content="Error uploading file", status_code=500)
+
     try:
+        # Ensure duration is converted to an int or float before adding 6
+        duration = round(float(duration)+2, 2)
+        print("Generirungsdauer:", duration)
         return templates.TemplateResponse("video_duration.html", {
-        "request": request,
-        "file_name": file.filename,
-        "file_location": file_location,
-        "video_duration": video_duration,
-        "duration": duration,
-        "lang": lang,
-        "user": username,
-        "timestamp": timestamp,
-        "foot":footer, "header": header
-    })
+            "request": request,
+            "file_name": file.filename,
+            "file_location": file_location,
+            "video_duration": video_duration,
+            "duration": duration,
+            "lang": lang,
+            "user": username,
+            "timestamp": timestamp,
+            "foot": footer,
+            "header": header
+        })
     except FileNotFoundError:
         return HTMLResponse(content="File not found", status_code=404)
+
 
 @router.post("/uploadfile/")
 async def upload_file(request: Request, file_location: str = Form(...), video_duration: float = Form(...), duration: float = Form(...), lang: str = Form(...), user: str = Form(...), timestamp: int= Form(...)):
@@ -146,7 +156,8 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
         #request.session['output_file'] = output_file 
         end = time.time()
         new_d = end-start
-        Time.add_newtime(new_d , duration)
+        new_f = Time.add_newtime(new_d , video_duration)
+        print ("Neuer Faktor: " + new_f)
     except:
         folder = PATH_SEPARATOR +"videos"+PATH_SEPARATOR + filename
         FileManager.delete_tmp_folder(folder)
@@ -178,8 +189,10 @@ async def reg_page(request: Request, message: str = ""):
         logged_in = True
     header = Html.header(logged_in)
     footer = Html.foot(username)
-    if(message == "vorhanden"):
+    if(message == "eVorhanden"):
         message = "Email schon vorhanden"
+    elif(message == "uVorhanden"):
+        message = "User schon vorhanden"
     else:
         message = ""
     try:
@@ -201,7 +214,9 @@ async def login_check(request: Request, username: str =  Form(...), password: st
 async def reg_check(request: Request, username: str =  Form(...), password: str = Form(...), email: str = Form(...)):
     message = User.register_user(username, password, email)
     if (message == "Vorhanden"):
-        return RedirectResponse(url="/reg/message=vorhanden", status_code=303)
+        return RedirectResponse(url="/reg/eVorhanden", status_code=303)
+    elif (message == "uVorhanden"):
+        return RedirectResponse(url="/reg/uVorhanden", status_code=303)
     else:
         return RedirectResponse(url="/login/e", status_code=303)
 
@@ -213,15 +228,15 @@ async def logout(request: Request):
 @router.get("/me", response_class=HTMLResponse)
 async def me_page(request: Request):
     username = request.session.get('user')
-    
     logged_in = False
     if username:
+        timeout(request)
         user = "Willkomen, " + username
         video = Db.get_videos(username)
         logged_in = True
     else:
         user = '''<h2>Melde dich bitte an!</h2><br>
-<button onclick="window.location.href='/login'">Anmelden</button>'''
+<button onclick="window.location.href='/login/s'">Anmelden</button>'''
     header = Html.header(logged_in)
     footer = Html.foot(username)
     try:
@@ -231,12 +246,12 @@ async def me_page(request: Request):
 
 def timeout(request):
     time_request = request.session.get('time')
-    thirty_m = 3 * 60
+    logintime = 3 * 60
     current_time = int(time.time())
     tmp = current_time - time_request
     print(tmp)
-    print(thirty_m)
-    if(tmp < thirty_m):
+    print(logintime)
+    if(tmp < logintime):
         refresh(request)
     else:
         request.session.clear()
