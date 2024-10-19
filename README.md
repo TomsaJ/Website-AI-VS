@@ -7,7 +7,7 @@ die anschließend mit einem Video (mp4) zusammen kombiniert wird. Außerdem wird
 <br><img src= "readme/user.png" style= "width: auto; height: 300px" title="Benutzerbereich" >
 
 ### Version
-    Aktuelle Version: v0.8
+    Aktuelle Version: v1.0
 
 ### Programmsprache
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
@@ -39,6 +39,5 @@ Für die Webanwendung wird eine Datanbank benötigt. Diese wird beim erstellen d
 
 Schau in die [SQL-Datei](sql/init.sql) dort kannst du die Initalesierung der Datenbank sehen.
 
-
-
-
+## Lizenz
+Dieses Projekt ist unter der [MIT-Lizenz](LICENSE) lizenziert - siehe die [LICENSE](LICENSE)-Datei für weitere Details.
