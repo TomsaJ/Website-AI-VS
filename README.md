@@ -39,6 +39,5 @@ Für die Webanwendung wird eine Datanbank benötigt. Diese wird beim erstellen d
 
 Schau in die [SQL-Datei](sql/init.sql) dort kannst du die Initalesierung der Datenbank sehen.
 
-
-
-
+## Lizenz
+Dieses Projekt ist unter der [MIT-Lizenz](LICENSE) lizenziert - siehe die [LICENSE](LICENSE)-Datei für weitere Details.

@@ -21,7 +21,7 @@ class Html:
     </script> '''
         return content
     def header(logged_in):
-        content = '''<ul style="height: 74px;">
+        content = '''<ul style="height: 74px; margin-bottom: 50px">
         <li >
         <a href="/">
             <img style="height: 46px; width: 46px;" src="/static/image/Logo.png" alt="Logo">
