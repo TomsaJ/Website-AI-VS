@@ -7,7 +7,7 @@ die anschließend mit einem Video (mp4) zusammen kombiniert wird. Außerdem wird
 <br><img src= "readme/user.png" style= "width: auto; height: 300px" title="Benutzerbereich" >
 
 ### Version
-    Aktuelle Version: v0.8
+    Aktuelle Version: v1.0
 
 ### Programmsprache
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
