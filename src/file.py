@@ -44,11 +44,6 @@ class FileManager:
     def delete_tmp_folder(folder_path):
         try:
             shutil.rmtree(folder_path)
-            '''print("Der Ordner 'tmp' wurde erfolgreich gelöscht.")
-        except FileNotFoundError:
-            print("Der Ordner 'tmp' wurde nicht gefunden.")
-        except PermissionError:
-            print("Keine Berechtigung zum Löschen des Ordners 'tmp'.")'''
         except Exception as e:
             print("Ein Fehler ist beim Löschen des Ordners 'tmp' aufgetreten:", e)
             return

@@ -153,11 +153,10 @@ async def upload_file(request: Request, file_location: str = Form(...), video_du
         username = request.session.get('user')
         Db.insert_video(output_file, username, folder, timestamp)
         print("Yes")
-        #request.session['output_file'] = output_file 
         end = time.time()
         new_d = end-start
         new_f = Time.add_newtime(new_d , video_duration)
-        print ("Neuer Faktor: " + new_f)
+        print ("Neuer Faktor: " + str(new_f))
     except:
         folder = PATH_SEPARATOR +"videos"+PATH_SEPARATOR + filename
         FileManager.delete_tmp_folder(folder)
