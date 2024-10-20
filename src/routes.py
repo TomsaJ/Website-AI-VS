@@ -173,7 +173,7 @@ async def login_page(request: Request, message: str = ""):
     header = Html.header(logged_in)
     footer = Html.foot(username)
     if(message == "error"):
-        message = "Email oder Passwort falsch"
+        message = "User oder Passwort falsch"
     else: 
         message = ""
     try:

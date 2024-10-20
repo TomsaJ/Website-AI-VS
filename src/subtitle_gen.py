@@ -7,7 +7,7 @@ class SubtitleGen:
     def create_subtitles(file_path, filename, lang,model):
         device = "cpu"
         model = whisper.load_model(model, device=device)
-        options = whisper.DecodingOptions()
+        options = whisper.DecodingOptions(fp16=False)
         result = model.transcribe(file_path, language=lang)
         
         # Save the SRT file
