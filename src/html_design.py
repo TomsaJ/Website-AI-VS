@@ -64,7 +64,7 @@ class Html:
         <span class="title">Video hochladen</span>
         <form class="form" id="uploadForm" action="/upload_duration/" method="post" enctype="multipart/form-data">
           <div class="group">
-          <input  name="file" type="file" accept=".mp4" required="">
+          <input  style="height: 50px; width: 100%" name="file" type="file" accept=".mp4" required>
           <label for="name">Datei</label>
           </div>
       <div class="group">
